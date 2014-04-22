@@ -7,7 +7,10 @@ Web services for Climate Data Analysis.
 
 Setting up a Python virtual environment: http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/
 
-Setting PostgreSQL: https://wiki.debian.org/PostgreSql
+Setting PostgreSQL
+
+https://wiki.debian.org/PostgreSql (debian)
+https://wiki.postgresql.org/wiki/YUM_Installation (CentOS)
 
 Setting up PostgreSQL with Django
 
