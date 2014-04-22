@@ -10,6 +10,7 @@ Setting up a Python virtual environment: http://www.jeffknupp.com/blog/2012/02/0
 Setting PostgreSQL
 
 https://wiki.debian.org/PostgreSql (debian)
+
 https://wiki.postgresql.org/wiki/YUM_Installation (CentOS)
 
 Setting up PostgreSQL with Django
