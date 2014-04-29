@@ -20,3 +20,11 @@ https://www.digitalocean.com/community/articles/how-to-install-and-configure-dja
 http://damntechnology.blogspot.com.au/2008/01/django-with-postgresql-on-centosrhel-5.html
 
 Common issue: http://stackoverflow.com/a/5450183
+
+**Running Django server**
+
+`python manage.py runserver <ip address>:8000`
+
+Example:
+
+`python manage.py runserver 130.56.248.104:8000`
