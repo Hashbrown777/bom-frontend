@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'climateanalyser',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -59,8 +60,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'bom',
-        'USER': 'hubba',
-        'PASSWORD': 'hubba',
+        'USER': 'bom',
+        'PASSWORD': 'bom',
         'HOST': 'localhost',
         'PORT': ''
     }
@@ -84,3 +85,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+TEMPLATE_DIRS = (
+      os.path.join(BASE_DIR, 'templates'),
+)
+
+STATICFILES_DIRS = (
+      os.path.join(BASE_DIR, 'static'),
+)
