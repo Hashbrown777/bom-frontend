@@ -1,10 +1,10 @@
 from django.template.loader import get_template
-from django.template import Context
+from django.template import RequestContext,loader
 from django.http import HttpResponse
 
 # Create your views here.
 def index(request):
-   #return HttpResponse("Woo !!! climateanalyser!!")
-   t = get_template('base.html')
-   html = t.render(Context())
+   t = loader.get_template('index.html')
+   context = RequestContext(request, {})
+   html = t.render(context)
    return HttpResponse(html)
