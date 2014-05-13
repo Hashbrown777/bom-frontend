@@ -2,7 +2,6 @@ from django.template.loader import get_template
 from django.template import RequestContext,loader
 from django.http import HttpResponse
 
-# Create your views here.
 def index(request):
    t = loader.get_template('index.html')
    context = RequestContext(request, {})
