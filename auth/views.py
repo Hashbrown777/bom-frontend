@@ -7,3 +7,12 @@ def index(request):
    context = RequestContext(request, {})
    html = t.render(context)
    return HttpResponse(html)
+   
+def register(request):
+
+   form = UserCreateForm()
+
+   #t = loader.get_template('register.html')
+   context = RequestContext(request, { 'form':form })
+   html = t.render(context)
+   return HttpResponse(html)
