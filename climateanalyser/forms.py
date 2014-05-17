@@ -1,8 +1,5 @@
 from django import forms
-from django.forms import ModelForm
-from climateanalyser.models import Computation
 
-class ComputeForm(ModelForm):
-   class Meta:
-      model = Computation
-      fields = ['data_file']
+class ComputeForm(forms.Form):
+   data_file_1 = forms.CharField(1000)
+   data_file_2 = forms.CharField(1000)
