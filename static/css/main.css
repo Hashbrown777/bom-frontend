@@ -27,6 +27,24 @@ body {
    margin:0 auto;
 }
 
+table {
+   width:100%;
+   text-align:left;
+}
+
+td, th {
+   padding:20px;
+}
+
+td {
+   border-top: 1px solid #ccc;
+}
+
+tr:hover {
+   background-color:#fffeee;
+}
+
+
 /* ==========================================================================
    Header
    ========================================================================== */
