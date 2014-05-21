@@ -24,13 +24,11 @@ def compute(request):
       form = ComputeForm(request.POST)
 
       if form.is_valid():
-         
-         #Save our data!
-         admin_user = User.objects.get(username__exact='admin')
 
-         #TODO - remove harcoded 'admin' value
-         computation = Computation(created_by=admin_user,
-               created_date=datetime.now())
+         user = request.user
+
+         #Save our data
+         computation = Computation(created_by=user,created_date=datetime.now())
          computation.save()
 
          data_file_1 = DataFile(path=form.cleaned_data['data_file_1'],
