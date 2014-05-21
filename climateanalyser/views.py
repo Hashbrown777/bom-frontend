@@ -54,6 +54,12 @@ def result(request):
    computation = Computation.objects.get(id=request.GET.get('computation'))
    return render(request, 'result.html', {'computation': computation})
 
+#display single computation
+def computation(request):
+   computation = Computation.objects.get(id=request.GET.get('id'))
+   return render(request, 'computation.html', {'computation': computation})
+
+
 #View currently logged in user's computations
 def my_computations(request):
 

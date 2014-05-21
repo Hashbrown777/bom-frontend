@@ -13,7 +13,7 @@
    <tbody>
    {% for computation in computations %}
       <tr>
-         <td>{{ computation.created_by.username }}</td>
+         <td><a href="/computation?id={{ computation.id }}">{{ computation.created_by.username }}</a></td>
          <td>{{ computation.created_date }}</td>
          <td>{{ computation.completed_date }}</td>
 
