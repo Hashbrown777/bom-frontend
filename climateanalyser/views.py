@@ -53,3 +53,15 @@ def result(request):
    #grab computation id from URL string
    computation = Computation.objects.get(id=request.GET.get('computation'))
    return render(request, 'result.html', {'computation': computation})
+
+#View currently logged in user's computations
+def my_computations(request):
+
+   computations = Computation.objects.filter(created_by=request.user)
+   return render(request, 'computations.html', { 'computations' : computations })
+
+#View all computations in the system
+def computations(request):
+   computations = Computation.objects.filter()
+   return render(request, 'computations.html', { 'computations' : computations })
+

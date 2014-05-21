@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<table>
+   <thead>
+      <tr>
+         <th>Created By</th>
+         <th>Created Date</th>
+         <th>Completed Date</th>
+      </tr>
+   </thead>
+   <tbody>
+   {% for computation in computations %}
+      <tr>
+         <td>{{ computation.created_by.username }}</td>
+         <td>{{ computation.created_date }}</td>
+         <td>{{ computation.completed_date }}</td>
+
+
+      </tr>
+   {% endfor %}
+   </tbody>
+</table>
+
+
+{% endblock %}
