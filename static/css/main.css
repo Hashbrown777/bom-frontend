@@ -40,7 +40,7 @@ td {
    border-top: 1px solid #ccc;
 }
 
-tr:hover {
+tbody tr:hover {
    background-color:#fffeee;
 }
 
