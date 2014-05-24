@@ -105,4 +105,14 @@ tbody tr:hover {
    min-height:400px;
 }
 
+.info_container .key,
+.info_container .value {
+   margin:5px 0px 5px 0px;
+   display:inline-block;
+}
+
+.info_container .key {
+   width:50%;
+   max-width:500px;
+}
 

@@ -2,7 +2,45 @@
 
 {% block content %}
 
-{{ computation.id }}
+<h1>Computation #{{ computation.id }}</h1>
 
+<div class="info_container computation">
+   <div class="item created_by">
+      <span class="key"><strong>Created by</strong></span>
+      <span class="value">{{ computation.created_by.username }}</span>
+   </div>
+   <div class="item created_date">
+      <span class="key"><strong>Created date</strong></span>
+      <span class="value">{{ computation.created_date }}</span>
+   </div>
+   <div class="item completed_date">
+      <span class="key"><strong>Completed date</strong></span>
+      <span class="value">{{ computation.completed_date }}</span>
+   </div>
+   <div class="item result">
+      <span class="key"><strong>Result</strong></span>
+      <span class="value"><a href="{{ computation.get_result }}">Download</a></span>
+   </div>
+
+
+   <h2>Data Files</h2>
+   <table class="data_files">
+      <thead>
+         <tr>
+            <th>ID</th>
+            <th>Path</th>
+         </tr>
+      </thead>
+      <tbody>
+      {% for data_file in computation.get_data_files %}
+         <tr>
+            <td>{{ data_file.id }}</td>
+            <td><a href="{{ data_file.path }}">{{ data_file.path }}</a></td>
+         </tr>
+      {% endfor %}
+      </tbody>
+   </table>
+
+</div>
 
 {% endblock %}

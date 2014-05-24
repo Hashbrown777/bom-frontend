@@ -2,9 +2,10 @@
 
 {% block content %}
 
-<table>
+<table class="computations">
    <thead>
       <tr>
+         <th>ID</th>
          <th>Created By</th>
          <th>Created Date</th>
          <th>Completed Date</th>
@@ -13,11 +14,10 @@
    <tbody>
    {% for computation in computations %}
       <tr>
-         <td><a href="/computation?id={{ computation.id }}">{{ computation.created_by.username }}</a></td>
+         <td><a href="/computation?id={{ computation.id }}">#{{ computation.id }}</a></td>
+         <td>{{ computation.created_by.username }}</td>
          <td>{{ computation.created_date }}</td>
          <td>{{ computation.completed_date }}</td>
-
-
       </tr>
    {% endfor %}
    </tbody>
