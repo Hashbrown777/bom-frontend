@@ -61,14 +61,16 @@ def computation(request):
 
    return render(request, 'computation.html', {'computation': computation})
 
-
-#View currently logged in user's computations
-def my_computations(request):
-   computations = Computation.objects.filter(created_by=request.user)
-   return render(request, 'computations.html', { 'computations' : computations })
-
-#View all computations in the system
+#View list of computations in the system
 def computations(request):
-   computations = Computation.objects.filter()
+
+   user = User.objects.filter(username=request.GET.get('user'))
+
+   #Filter for user
+   if user:
+      computations = Computation.objects.filter(created_by=user)
+   else:
+      computations = Computation.objects.filter()
+
    return render(request, 'computations.html', { 'computations' : computations })
 
