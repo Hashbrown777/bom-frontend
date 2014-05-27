@@ -19,7 +19,7 @@
    </div>
    <div class="item result">
       <span class="key"><strong>Result</strong></span>
-      <span class="value"><a href="{{ computation.get_result }}">Download</a></span>
+      <span class="value"><a href="{{ computation.result }}">Download</a></span>
    </div>
 
 
@@ -32,7 +32,7 @@
          </tr>
       </thead>
       <tbody>
-      {% for data_file in computation.get_data_files %}
+      {% for data_file in computation.data_files %}
          <tr>
             <td>{{ data_file.id }}</td>
             <td><a href="{{ data_file.path }}">{{ data_file.path }}</a></td>

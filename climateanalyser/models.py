@@ -8,12 +8,12 @@ class Computation(models.Model):
       calculation = models.CharField(max_length=100)
 
       #Return all the data files associated with this computation.
-      def get_data_files(self):
+      def data_files(self):
          return DataFile.objects.filter(computation=self.id).order_by('id')
 
       #Get the URL of the result from Zoo.
-      def get_result(self):
-         return ZooAdapter.get_result(self.get_data_files(), self.calculation)
+      def result(self):
+         return ZooAdapter.get_result(self.data_files(), self.calculation)
     
 class ZooAdapter():
 
@@ -21,6 +21,11 @@ class ZooAdapter():
    @staticmethod
    def get_result(data_files, calculation):
 
+      #must have at least two data files
+      if len(data_files) < 2:
+         return;
+
+      #TODO: accommodate for more than two data files
       result_path = ('http://130.56.248.143/cgi-bin/zoo_loader.cgi?request='
                      'Execute&service=WPS&version=1.0.0.0&identifier='
                      'Operation&DataInputs=selection=' + calculation + ';urls='
