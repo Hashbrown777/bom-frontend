@@ -28,7 +28,8 @@ def compute(request):
          user = request.user
 
          #Save our data
-         computation = Computation(created_by=user,created_date=datetime.now())
+         computation = Computation(created_by=user,created_date=datetime.now(),
+               calculation=form.cleaned_data['calculation'])
          computation.save()
 
          data_file_1 = DataFile(path=form.cleaned_data['data_file_1'],
