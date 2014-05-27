@@ -16,7 +16,7 @@
    {% for computation in computations %}
       <tr>
          <td><a href="/computation?id={{ computation.id }}">#{{ computation.id }}</a></td>
-         <td>{{ computation.calculation }}</td>
+         <td>{{ computation.calculation.capitalize }}</td>
          <td>{{ computation.created_by.username }}</td>
          <td>{{ computation.created_date }}</td>
          <td>{{ computation.completed_date }}</td>
