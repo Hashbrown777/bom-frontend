@@ -15,7 +15,7 @@ body {
    text-decoration:none;
    color:#ffffff;
    font-weight:bold;
-   display:block;
+   display:inline-block;
 }
 
 .button:hover {
@@ -114,5 +114,9 @@ tbody tr:hover {
 .info_container .key {
    width:50%;
    max-width:500px;
+}
+
+.controls .button.my_computations {
+   margin-right:20px;
 }
 
