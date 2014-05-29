@@ -18,8 +18,13 @@ body {
    display:inline-block;
 }
 
-.button:hover {
+.button:not(.disabled):hover {
    background:#1a63a9
+}
+
+.button.disabled {
+   cursor:default;
+   background:#C8C8C8;
 }
 
 .wrapper {
@@ -116,7 +121,11 @@ tbody tr:hover {
    max-width:500px;
 }
 
-.controls .button.my_computations {
+.controls {
+   margin:20px 0px 20px;
+}
+
+.controls .button.all_computations {
    margin-right:20px;
 }
 

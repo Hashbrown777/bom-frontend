@@ -65,12 +65,16 @@ def computation(request):
 def computations(request):
 
    user = User.objects.filter(username=request.GET.get('user'))
+  
+   template_params = {}
 
    #Filter for user
    if user:
-      computations = Computation.objects.filter(created_by=user)
+      template_params['computations'] = Computation.objects.filter(created_by=user)
+      template_params['show_mine'] = True;
    else:
-      computations = Computation.objects.filter()
+      template_params['computations'] = Computation.objects.filter()
+      template_params['show_mine'] = False;
 
-   return render(request, 'computations.html', { 'computations' : computations })
+   return render(request, 'computations.html', template_params)
 
