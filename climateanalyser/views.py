@@ -19,6 +19,10 @@ def index(request):
 #Form for creating new computation
 def compute(request):
 
+   if (request.user.is_authenticated() == False):
+      messages.error(request, 'You must login to view that page.')
+      return HttpResponseRedirect('/auth/login')
+
    if request.method == 'POST':
 
       #grab form with the user input
