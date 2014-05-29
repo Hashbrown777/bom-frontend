@@ -52,10 +52,12 @@
          <div class="wrapper">
          {% if messages %}
             <div class="messages">
+            <ul>
             {% for message in messages %}
                <li{% if message.tags %} 
                class="{{ message.tags }}"{% endif %}>{{ message }}</li>
             {% endfor %}
+            </ul>
             <div>
          {% endif %}
 
