@@ -50,6 +50,15 @@
       </div>
       <div id="main">
          <div class="wrapper">
+         {% if messages %}
+            <div class="messages">
+            {% for message in messages %}
+               <li{% if message.tags %} 
+               class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+            <div>
+         {% endif %}
+
 	{% block content %}
                 <h1>Sample Heading 1</h1>
                 <h2>Sample Heading 2</h2>

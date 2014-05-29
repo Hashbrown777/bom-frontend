@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from climateanalyser.forms import ComputeForm
 from climateanalyser.models import *
+from django.contrib import messages
 
 #Default page
 def index(request):
@@ -40,20 +41,15 @@ def compute(request):
          data_file_1.save()
          data_file_2.save()
 
+         messages.success(request, 'Computation  successfully created!')
+
          #show result page
-         return HttpResponseRedirect('/result?computation=' 
-               + str(computation.id))
+         return HttpResponseRedirect('/computations?user=' + user.username)
 
    else:
       form = ComputeForm()
 
    return render(request, 'compute_form.html', { 'form' : form, })
-
-#Display result after submitting computation
-def result(request):
-   #grab computation id from URL string
-   computation = Computation.objects.get(id=request.GET.get('computation'))
-   return render(request, 'result.html', {'computation': computation})
 
 #display single computation
 def computation(request):
@@ -64,12 +60,11 @@ def computation(request):
 #View list of computations in the system
 def computations(request):
 
-   user = User.objects.filter(username=request.GET.get('user'))
-  
    template_params = {}
 
-   #Filter for user
-   if user:
+   #Filter for current user
+   if (request.GET.get('show_mine')):
+      user = request.user
       template_params['computations'] = Computation.objects.filter(created_by=user)
       template_params['show_mine'] = True;
    else:
