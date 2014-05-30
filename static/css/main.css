@@ -5,8 +5,6 @@
 body {
    height:100%;
    background-color:white;
-   font-family:Open Sans, arial, sans serif;
-   font-size:12px;
 }
 
 .button {
@@ -29,8 +27,13 @@ body {
 }
 
 .wrapper {
-   width:960px;
+   width:100%;
+   max-width:960px;
    margin:0 auto;
+   -moz-box-sizing:border-box;
+   -webkit-box-sizing:border-box;
+   box-sizing:border-box;
+   padding:0px 20px;
 }
 
 table {
@@ -50,11 +53,9 @@ tbody tr:hover {
    background-color:#fffeee;
 }
 
-
 /* ==========================================================================
    Header
    ========================================================================== */
-
 
 #header {
    background:#fff;
@@ -74,14 +75,12 @@ tbody tr:hover {
 
 #header .menu li {
    float:left;
-   margin:0 10px;
+   margin-left:20px;
 }
-
 
 /* ==========================================================================
    Footer 
    ========================================================================== */
-
 
 #footer {
    border-top: 2px solid #ccc;
@@ -98,7 +97,6 @@ tbody tr:hover {
 
 #footer .footer-menu a {
    text-decoration:underline;
-   font-size:14px;
 }
 
 /* ==========================================================================
@@ -109,6 +107,7 @@ tbody tr:hover {
    border:1px solid white;
    background-color:white;
    min-height:400px;
+   margin:20px 0px 60px 0px;
 }
 
 .info_container .key,
@@ -129,4 +128,3 @@ tbody tr:hover {
 .controls .button.all_computations {
    margin-right:20px;
 }
-
