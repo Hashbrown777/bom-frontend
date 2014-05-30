@@ -5,7 +5,14 @@ class Computation(models.Model):
       created_by = models.ForeignKey(User)
       created_date = models.DateTimeField('date created')
       completed_date = models.DateTimeField('date completed',null=True)
-      calculation = models.CharField(max_length=100)
+
+      CALCULATION_CHOICES = (
+            ('correlate', 'Correlate'),
+            ('regress', 'Regress'),
+      )
+
+      calculation = models.CharField(max_length=100,
+            choices=CALCULATION_CHOICES, default='correlate')
 
       #Return all the data files associated with this computation.
       def data_files(self):
@@ -25,11 +32,16 @@ class ZooAdapter():
       if len(data_files) < 2:
          return;
 
-      #TODO: accommodate for more than two data files
       result_path = ('http://130.56.248.143/cgi-bin/zoo_loader.cgi?request='
                      'Execute&service=WPS&version=1.0.0.0&identifier='
-                     'Operation&DataInputs=selection=' + calculation + ';urls='
-                     + data_files[0].path + ',' + data_files[1].path)
+                     'Operation&DataInputs=selection=' + calculation + ';urls=')
+
+      #append all data files
+      for data_file in data_files:
+         result_path += data_file.path + ','
+
+      #Remove trailing comma
+      result_path = result_path[:-1]
 
       return result_path
 
