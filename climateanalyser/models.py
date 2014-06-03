@@ -4,7 +4,8 @@ from django.contrib.auth.models import User
 class Computation(models.Model):
       created_by = models.ForeignKey(User)
       created_date = models.DateTimeField('date created')
-      completed_date = models.DateTimeField('date completed',null=True)
+      completed_date = models.DateTimeField('date completed',null=True,
+            blank=True)
 
       CALCULATION_CHOICES = (
             ('correlate', 'Correlate'),
@@ -48,4 +49,3 @@ class ZooAdapter():
 class DataFile(models.Model):
    path = models.CharField(max_length=1000)
    computation = models.ForeignKey(Computation)
-
