@@ -69,7 +69,8 @@ def computations(request):
    #Filter for current user
    if (request.GET.get('show_mine')):
       user = request.user
-      template_params['computations'] = Computation.objects.filter(created_by=user)
+      template_params['computations'] = Computation.objects.filter(
+            created_by=user)
       template_params['show_mine'] = True;
    else:
       template_params['computations'] = Computation.objects.filter()
