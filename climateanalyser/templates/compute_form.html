@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<script src="{{ STATIC_URL }}/js/compute_form.js"></script>
 
 <h1>Compute Data</h1>
 <form action="/compute/" method="post">
    {% csrf_token %}
-   {{ form.as_p }}
+   {{ computation_form.as_p }}
+   <div id="data_file_container">
+      {{ data_file_form.as_p }}
+   </div>
+   <button id="add_file" class="button add_file">Add File</button>
    <input type="submit" value="Submit" class="button" />
 </form>
 
