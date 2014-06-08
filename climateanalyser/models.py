@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class DataFile(models.Model):
+   file_url = models.CharField(max_length=1000)
+   cached_file = models.CharField(max_length=1000)
+   last_modified = models.DateTimeField('last modified')
+
 class Computation(models.Model):
       created_by = models.ForeignKey(User)
       created_date = models.DateTimeField('date created')
@@ -12,8 +17,12 @@ class Computation(models.Model):
             ('regress', 'Regress'),
       )
 
+      datafiles = models.ManyToManyField(DataFile)
+
       calculation = models.CharField(max_length=100,
             choices=CALCULATION_CHOICES, default='correlate')
+
+      data_files=models.ManyToManyField(DataFile)
 
       #Return all the data files associated with this computation.
       def data_files(self):
@@ -22,7 +31,7 @@ class Computation(models.Model):
       #Get the URL of the result from Zoo.
       def result(self):
          return ZooAdapter.get_result(self.data_files(), self.calculation)
-    
+
 class ZooAdapter():
 
    #Get result URL from Zoo.
@@ -46,6 +55,4 @@ class ZooAdapter():
 
       return result_path
 
-class DataFile(models.Model):
-   path = models.CharField(max_length=1000)
-   computation = models.ForeignKey(Computation)
+
