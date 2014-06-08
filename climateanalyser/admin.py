@@ -3,6 +3,7 @@ from climateanalyser.models import Computation, DataFile
 
 class DataFileInline(admin.StackedInline):
    model = DataFile
+   fields = ['file_url']
    extra = 2
 
 class ComputationAdmin(admin.ModelAdmin):
@@ -10,5 +11,3 @@ class ComputationAdmin(admin.ModelAdmin):
    inlines = [DataFileInline]
 
 admin.site.register(Computation, ComputationAdmin)
-
-
