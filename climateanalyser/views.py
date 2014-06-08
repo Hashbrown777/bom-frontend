@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.template import RequestContext,loader
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from climateanalyser.forms import ComputeForm
+from climateanalyser.forms import ComputationForm,DataFileForm
 from climateanalyser.models import *
 from django.contrib import messages
 
@@ -23,37 +23,15 @@ def compute(request):
       messages.error(request, 'You must login to view that page.')
       return HttpResponseRedirect('/auth/login')
 
-   if request.method == 'POST':
+   computation_form = ComputationForm()
+   data_file_form = DataFileForm()
 
-      #grab form with the user input
-      form = ComputeForm(request.POST)
+   if (request.POST.get('file_url')):
+      return HttpResponse(request.POST.get('file_url'))
 
-      if form.is_valid():
-
-         user = request.user
-
-         #Save our data
-         computation = Computation(created_by=user,created_date=datetime.now(),
-               calculation=form.cleaned_data['calculation'])
-         computation.save()
-
-         data_file_1 = DataFile(path=form.cleaned_data['data_file_1'],
-               computation=computation)
-         data_file_2 = DataFile(path=form.cleaned_data['data_file_2'],
-               computation=computation)
-
-         data_file_1.save()
-         data_file_2.save()
-
-         messages.success(request, 'Computation  successfully created!')
-
-         #show result page
-         return HttpResponseRedirect('/computations?user=' + user.username)
-
-   else:
-      form = ComputeForm()
-
-   return render(request, 'compute_form.html', { 'form' : form, })
+   return render(request, 'compute_form.html', { 
+         'computation_form' : computation_form, 
+         'data_file_form' : data_file_form })
 
 #display single computation
 def computation(request):
