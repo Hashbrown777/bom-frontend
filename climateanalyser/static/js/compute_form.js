@@ -4,13 +4,14 @@ jQuery(function($){
    $("#add_file").click(function(){
       event.preventDefault();
 
-      $container = $("#data_file_container").find('p');
-      $extraField = $container.find("input").clone();
+      $container = $("#data_file_container").find("p");
+      $extraField = $container.find("input:last").clone();
 
-      idCount = parseInt($extraField.attr('id').split('_')[2]);
+      idCount = parseInt($extraField.attr("id").split("_")[2]);
       newIdCount = idCount + 1;
 
-      $extraField.attr('id', 'file_url_' + newIdCount);
+      $extraField.val("");
+      $extraField.attr("id", "file_url_" + newIdCount);
       $container.append($extraField);
 
    });
