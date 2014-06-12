@@ -1,12 +1,11 @@
-from datetime import datetime
 from django.utils.dateformat import format
 from django.template.loader import get_template
 from django.shortcuts import render
 from django.template import RequestContext,loader
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from climateanalyser.forms import ComputationForm,DataFileForm
-from climateanalyser.models import *
+from forms import *
+from models import *
 from django.contrib import messages
 
 #Default page
@@ -17,17 +16,39 @@ def index(request):
    return HttpResponse(html)
 
 #Form for creating new computation
-def compute(request):
+def compute(request): 
+   
+   user = request.user
 
-   if (request.user.is_authenticated() == False):
+   if (user.is_authenticated() == False):
       messages.error(request, 'You must login to view that page.')
       return HttpResponseRedirect('/auth/login')
 
-   computation_form = ComputationForm()
-   data_file_form = DataFileForm()
+   computation_form = ComputationForm(request.POST)
+   data_file_form = DataFileForm(request.POST)
 
-   if (request.POST.get('file_url')):
-      return HttpResponse(request.POST.get('file_url'))
+   if request.method == "POST":
+
+      if computation_form.is_valid() and data_file_form.is_valid():
+
+         computation = Computation(
+               created_by = user,
+               calculation = computation_form.cleaned_data['calculation'])
+
+         computation.save()
+
+         for file_url in request.POST.getlist('file_url[]'):
+            computation.datafiles.create(file_url=file_url)
+
+         messages.success(request, 'Computation  successfully created!')
+
+         #return to computations page
+         return HttpResponseRedirect('/computations?user=' + user.username)
+
+   else:
+      computation_form = ComputationForm()
+      data_file_form = DataFileForm()
+
 
    return render(request, 'compute_form.html', { 
          'computation_form' : computation_form, 

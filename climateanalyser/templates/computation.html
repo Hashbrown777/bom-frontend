@@ -37,10 +37,10 @@
          </tr>
       </thead>
       <tbody>
-      {% for data_file in computation.data_files %}
+      {% for datafile in computation.datafiles.all %}
          <tr>
-            <td>{{ data_file.id }}</td>
-            <td><a href="{{ data_file.path }}">{{ data_file.path }}</a></td>
+            <td>{{ datafile.id }}</td>
+            <td><a href="{{ datafile.file_url }}">{{ datafile.file_url }}</a></td>
          </tr>
       {% endfor %}
       </tbody>

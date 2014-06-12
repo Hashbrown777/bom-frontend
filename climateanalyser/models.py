@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -5,6 +6,11 @@ class DataFile(models.Model):
    file_url = models.CharField(max_length=1000)
    cached_file = models.CharField(max_length=1000)
    last_modified = models.DateTimeField('last modified')
+
+   def save(self, *args, **kwargs):
+      self.cached_file = self.file_url
+      self.last_modified = datetime.now()
+      super(DataFile, self).save(*args, **kwargs)
 
 class Computation(models.Model):
       created_by = models.ForeignKey(User)
@@ -17,20 +23,21 @@ class Computation(models.Model):
             ('regress', 'Regress'),
       )
 
-      datafiles = models.ManyToManyField(DataFile)
-
       calculation = models.CharField(max_length=100,
             choices=CALCULATION_CHOICES, default='correlate')
 
-      data_files=models.ManyToManyField(DataFile)
-
-      #Return all the data files associated with this computation.
-      def data_files(self):
-         return DataFile.objects.filter(computation=self.id).order_by('id')
+      datafiles = models.ManyToManyField(DataFile)
 
       #Get the URL of the result from Zoo.
       def result(self):
-         return ZooAdapter.get_result(self.data_files(), self.calculation)
+         return ZooAdapter.get_result(self.datafiles.all(), self.calculation)
+
+      def save(self, *args, **kwargs):
+         if self.created_date is None:
+            self.created_date = datetime.now()
+         super(Computation, self).save(*args, **kwargs)
+
+
 
 class ZooAdapter():
 
@@ -48,7 +55,7 @@ class ZooAdapter():
 
       #append all data files
       for data_file in data_files:
-         result_path += data_file.path + ','
+         result_path += data_file.file_url + ','
 
       #Remove trailing comma
       result_path = result_path[:-1]
