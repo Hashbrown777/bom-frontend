@@ -24,35 +24,23 @@ def compute(request):
       messages.error(request, 'You must login to view that page.')
       return HttpResponseRedirect('/auth/login')
 
-   computation_form = ComputationForm(request.POST)
-   data_file_form = DataFileForm(request.POST)
+   form = ComputationForm(request.POST)
 
-   if request.method == "POST":
+   if request.method == 'POST':
 
-      if computation_form.is_valid() and data_file_form.is_valid():
+      if form.is_valid():
 
-         computation = Computation(
-               created_by = user,
-               calculation = computation_form.cleaned_data['calculation'])
-
-         computation.save()
-
-         for file_url in request.POST.getlist('file_url[]'):
-            computation.datafiles.create(file_url=file_url)
-
+         form.save()
+         
          messages.success(request, 'Computation  successfully created!')
 
          #return to computations page
          return HttpResponseRedirect('/computations?user=' + user.username)
 
    else:
-      computation_form = ComputationForm()
-      data_file_form = DataFileForm()
+      form = ComputationForm()
 
-
-   return render(request, 'compute_form.html', { 
-         'computation_form' : computation_form, 
-         'data_file_form' : data_file_form })
+   return render(request, 'compute_form.html', { 'computation_form' : form, })
 
 #display single computation
 def computation(request):
