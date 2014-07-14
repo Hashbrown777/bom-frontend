@@ -12,8 +12,8 @@ class DataFilesField(forms.CharField):
    def prepare_value(self, value):
       # Set value to list of files instead of DataFile IDs
 
-      if value == "":
-         return value 
+      if not value:
+         return ''
 
       return_value = ''
       
