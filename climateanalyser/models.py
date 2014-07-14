@@ -1,6 +1,8 @@
 from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
+import hashlib
+import urllib
 
 class DataFile(models.Model):
    file_url = models.CharField(max_length=1000)
@@ -8,7 +10,12 @@ class DataFile(models.Model):
    last_modified = models.DateTimeField('last modified')
 
    def save(self, *args, **kwargs):
-      self.cached_file = self.file_url
+
+      #Create cache file
+      self.cached_file = hashlib.md5(self.file_url).hexdigest()
+      urllib.urlretrieve(self.file_url, 
+            'climateanalyser/datafiles/' + self.cached_file)
+
       self.last_modified = datetime.now()
       super(DataFile, self).save(*args, **kwargs)
 
