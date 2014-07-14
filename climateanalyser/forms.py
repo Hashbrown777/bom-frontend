@@ -22,8 +22,17 @@ class ComputationForm(ModelForm):
    def save_m2m(self):
       #Save DataFiles
 
-      self.instance.datafiles.all().delete()
+      #remove relationships with existing datafiles but don't delete them!
+      self.instance.datafiles.clear()
 
-      for datafile in self.cleaned_data['datafiles']:
-         self.instance.datafiles.create(file_url=datafile)
+      for file_url in self.cleaned_data['datafiles']:
+         
+         datafile = DataFile.objects.filter(file_url=file_url)
+   
+         if datafile:
+            #add existing datafile instance
+            self.instance.datafiles.add(datafile[0])
+         else:
+            #new datafile
+            self.instance.datafiles.create(file_url=file_url)
   
