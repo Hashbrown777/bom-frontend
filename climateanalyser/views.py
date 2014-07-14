@@ -15,8 +15,8 @@ def index(request):
    html = t.render(context)
    return HttpResponse(html)
 
-#Form for creating new computation
 def compute(request): 
+#Form for creating new computation
    
    user = request.user
 
@@ -30,7 +30,7 @@ def compute(request):
 
       if form.is_valid():
 
-         form.save()
+         form.save(user)
          
          messages.success(request, 'Computation  successfully created!')
 
@@ -40,7 +40,7 @@ def compute(request):
    else:
       form = ComputationForm()
 
-   return render(request, 'compute_form.html', { 'computation_form' : form, })
+   return render(request, 'compute_form.html', { 'form' : form, })
 
 #display single computation
 def computation(request):

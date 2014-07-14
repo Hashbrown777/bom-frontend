@@ -4,21 +4,26 @@ from django import forms
 from fields import DataFilesField
 
 class ComputationForm(ModelForm):
-   data_files = DataFilesField()
+   datafiles = DataFilesField()
    class Meta:
-      model=Computation
-      fields = ['calculation']
+      model = Computation
+      fields = ['calculation','datafiles']
 
-   def save(self):
+   def save(self,user=False,commit=True):
 
-      user = self.instance.user
+      if not self.instance.id:
+         self.instance = Computation(created_by = user,
+              calculation = self.cleaned_data['calculation'])
+         self.instance.save()
+         self.save_m2m()
 
-      computation = Computation(
-            created_by = user,
-            calculation = self.cleaned_data['calculation'])
+      return self.instance
 
-      computation.save()
+   def save_m2m(self):
+      #Save DataFiles
 
-      for data_file in self.cleaned_data['data_files']:
-         computation.datafiles.create(file_url=data_file)
+      self.instance.datafiles.all().delete()
 
+      for datafile in self.cleaned_data['datafiles']:
+         self.instance.datafiles.create(file_url=datafile)
+  

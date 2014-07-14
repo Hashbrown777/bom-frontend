@@ -5,8 +5,7 @@
 <h1>Compute Data</h1>
 <form action="/compute/" method="post">
    {% csrf_token %}
-   {{ computation_form.media }}
-   {{ computation_form.as_p }}
+   {{ form.as_p }}
    <div id="data_file_container">
    </div>
    <input type="submit" value="Submit" class="button" />

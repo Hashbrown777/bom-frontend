@@ -43,10 +43,10 @@ class ZooAdapter():
 
    #Get result URL from Zoo.
    @staticmethod
-   def get_result(data_files, calculation):
+   def get_result(datafiles, calculation):
 
       #must have at least two data files
-      if len(data_files) < 2:
+      if len(datafiles) < 2:
          return;
 
       result_path = ('http://130.56.248.143/cgi-bin/zoo_loader.cgi?request='
@@ -54,8 +54,8 @@ class ZooAdapter():
                      'Operation&DataInputs=selection=' + calculation + ';urls=')
 
       #append all data files
-      for data_file in data_files:
-         result_path += data_file.file_url + ','
+      for datafile in datafiles:
+         result_path += datafile.file_url + ','
 
       #Remove trailing comma
       result_path = result_path[:-1]
