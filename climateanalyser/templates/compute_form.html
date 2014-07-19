@@ -2,11 +2,13 @@
 
 {% block content %}
 
-
+<h1>Compute Data</h1>
 <form action="/compute/" method="post">
    {% csrf_token %}
    {{ form.as_p }}
-   <input type="submit" value="Submit"/>
+   <div id="data_file_container">
+   </div>
+   <input type="submit" value="Submit" class="button" />
 </form>
 
 {% endblock %}

@@ -2,10 +2,23 @@
 
 {% block content %}
 
+<h1>Computations</h1>
+
+<div class="controls">
+{% if user.username %}
+   <a href="/computations" class="button all_computations 
+      {% if show_mine == False %} disabled {% endif %}">All Computations</a>
+
+   <a href="/computations?show_mine=true" class="button my_computations
+      {% if show_mine %} disabled {% endif %}">My Computations</a>
+{% endif %}
+</div>
+
 <table class="computations">
    <thead>
       <tr>
          <th>ID</th>
+         <th>Calculation</th>
          <th>Created By</th>
          <th>Created Date</th>
          <th>Completed Date</th>
@@ -14,7 +27,9 @@
    <tbody>
    {% for computation in computations %}
       <tr>
-         <td><a href="/computation?id={{ computation.id }}">#{{ computation.id }}</a></td>
+         <td><a href="/computation?id={{ computation.id }}">
+               #{{ computation.id }}</a></td>
+         <td>{{ computation.calculation.capitalize }}</td>
          <td>{{ computation.created_by.username }}</td>
          <td>{{ computation.created_date }}</td>
          <td>{{ computation.completed_date }}</td>
@@ -22,6 +37,5 @@
    {% endfor %}
    </tbody>
 </table>
-
 
 {% endblock %}

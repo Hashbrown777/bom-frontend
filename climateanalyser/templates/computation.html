@@ -9,6 +9,11 @@
       <span class="key"><strong>Created by</strong></span>
       <span class="value">{{ computation.created_by.username }}</span>
    </div>
+   <div class="item calculation">
+      <span class="key"><strong>Calculation</strong></span>
+      <span class="value">{{ computation.calculation.capitalize }}</span>
+   </div>
+
    <div class="item created_date">
       <span class="key"><strong>Created date</strong></span>
       <span class="value">{{ computation.created_date }}</span>
@@ -19,7 +24,7 @@
    </div>
    <div class="item result">
       <span class="key"><strong>Result</strong></span>
-      <span class="value"><a href="{{ computation.get_result }}">Download</a></span>
+      <span class="value"><a href="{{ computation.result }}">Download</a></span>
    </div>
 
 
@@ -32,10 +37,10 @@
          </tr>
       </thead>
       <tbody>
-      {% for data_file in computation.get_data_files %}
+      {% for datafile in computation.datafiles.all %}
          <tr>
-            <td>{{ data_file.id }}</td>
-            <td><a href="{{ data_file.path }}">{{ data_file.path }}</a></td>
+            <td>{{ datafile.id }}</td>
+            <td><a href="{{ datafile.file_url }}">{{ datafile.file_url }}</a></td>
          </tr>
       {% endfor %}
       </tbody>

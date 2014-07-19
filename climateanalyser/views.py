@@ -1,12 +1,12 @@
-from datetime import datetime
 from django.utils.dateformat import format
 from django.template.loader import get_template
 from django.shortcuts import render
 from django.template import RequestContext,loader
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from climateanalyser.forms import ComputeForm
-from climateanalyser.models import *
+from forms import *
+from models import *
+from django.contrib import messages
 
 #Default page
 def index(request):
@@ -15,44 +15,32 @@ def index(request):
    html = t.render(context)
    return HttpResponse(html)
 
+def compute(request): 
 #Form for creating new computation
-def compute(request):
+   
+   user = request.user
+
+   if (user.is_authenticated() == False):
+      messages.error(request, 'You must login to view that page.')
+      return HttpResponseRedirect('/auth/login')
+
+   form = ComputationForm(request.POST)
 
    if request.method == 'POST':
 
-      #grab form with the user input
-      form = ComputeForm(request.POST)
-
       if form.is_valid():
 
-         user = request.user
+         form.save(user)
+         
+         messages.success(request, 'Computation  successfully created!')
 
-         #Save our data
-         computation = Computation(created_by=user,created_date=datetime.now())
-         computation.save()
-
-         data_file_1 = DataFile(path=form.cleaned_data['data_file_1'],
-               computation=computation)
-         data_file_2 = DataFile(path=form.cleaned_data['data_file_2'],
-               computation=computation)
-
-         data_file_1.save()
-         data_file_2.save()
-
-         #show result page
-         return HttpResponseRedirect('/result?computation=' 
-               + str(computation.id))
+         #return to computations page
+         return HttpResponseRedirect('/computations?user=' + user.username)
 
    else:
-      form = ComputeForm()
+      form = ComputationForm()
 
    return render(request, 'compute_form.html', { 'form' : form, })
-
-#Display result after submitting computation
-def result(request):
-   #grab computation id from URL string
-   computation = Computation.objects.get(id=request.GET.get('computation'))
-   return render(request, 'result.html', {'computation': computation})
 
 #display single computation
 def computation(request):
@@ -60,14 +48,20 @@ def computation(request):
 
    return render(request, 'computation.html', {'computation': computation})
 
-
-#View currently logged in user's computations
-def my_computations(request):
-   computations = Computation.objects.filter(created_by=request.user)
-   return render(request, 'computations.html', { 'computations' : computations })
-
-#View all computations in the system
+#View list of computations in the system
 def computations(request):
-   computations = Computation.objects.filter()
-   return render(request, 'computations.html', { 'computations' : computations })
+
+   template_params = {}
+
+   #Filter for current user
+   if (request.GET.get('show_mine')):
+      user = request.user
+      template_params['computations'] = Computation.objects.filter(
+            created_by=user)
+      template_params['show_mine'] = True;
+   else:
+      template_params['computations'] = Computation.objects.filter()
+      template_params['show_mine'] = False;
+
+   return render(request, 'computations.html', template_params)
 

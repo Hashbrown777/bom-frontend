@@ -18,7 +18,8 @@
       <link rel="stylesheet" href="{% static "css/main.css" %}">
       <link rel="stylesheet" href="{% static "css/typography.css" %}">
       <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,600,800' rel='stylesheet' type='text/css'>
-      <script src="{{ STATIC_URL }}/js/vendor/modernizr-2.6.2.min.js"></script>
+
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
    </head>
    <body>
       <!--[if lt IE 7]>
@@ -36,7 +37,7 @@
                         <a href="/compute" class="button">Compute Data</a>
                     </li>
                     <li>
-                        <a href="/login" class="button">Login</a>
+                        <a href="/computations" class="button">Computations</a>
                     </li>
                     <li>
                         <a href="#" class="button">Test</a>
@@ -50,6 +51,17 @@
       </div>
       <div id="main">
          <div class="wrapper">
+         {% if messages %}
+            <div class="messages">
+            <ul>
+            {% for message in messages %}
+               <li{% if message.tags %} 
+               class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+            </ul>
+            <div>
+         {% endif %}
+
 	{% block content %}
                 <h1>Sample Heading 1</h1>
                 <h2>Sample Heading 2</h2>
@@ -78,7 +90,6 @@
             </ul>
         </div>
       </div>
-      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
       <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
       <script src="{{ STATIC_URL }}/js/plugins.js"></script>
       <script src="{{ STATIC_URL }}/js/main.js"></script>
