@@ -22,7 +22,7 @@ def compute(request):
 
    if (user.is_authenticated() == False):
       messages.error(request, 'You must login to view that page.')
-      return HttpResponseRedirect('/auth/login')
+      return HttpResponseRedirect('/login')
 
    form = ComputationForm(request.POST)
 
