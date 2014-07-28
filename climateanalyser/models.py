@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 import hashlib
 import urllib
+import re
 
 class DataFile(models.Model):
    class Meta:
@@ -54,25 +55,43 @@ class ComputationDataFile(models.Model):
 
 class ZooAdapter():
 
-   #Get result URL from Zoo.
    @staticmethod
-   def get_result(datafiles, calculation):
+   def get_descriptor_file(datafiles, calculation):
+      #Get the file that describes the result of our  computation
 
       #must have at least two data files
       if len(datafiles) < 2:
          return;
 
-      result_path = ('http://130.56.248.143/cgi-bin/zoo_loader.cgi?request='
+      descriptor_file = ('http://130.56.248.143/cgi-bin/zoo_loader.cgi?request='
                      'Execute&service=WPS&version=1.0.0.0&identifier='
                      'Operation&DataInputs=selection=' + calculation + ';urls=')
 
       #append all data files
       for datafile in datafiles:
-         result_path += datafile.file_url + ','
+         descriptor_file += datafile.file_url + ','
 
       #Remove trailing comma
-      result_path = result_path[:-1]
+      descriptor_file = descriptor_file[:-1]
 
-      return result_path
+      return descriptor_file
 
+   @staticmethod
+   def get_result(datafiles, calculation):
+      #Get the url of the result file for the computation
 
+      descriptor_file = ZooAdapter.get_descriptor_file(datafiles, calculation)
+
+      result_url = ''
+
+      filehandle = urllib.urlopen(descriptor_file)
+
+      for line in filehandle.readlines():
+         if line.find('.nc') > 0:
+            match = re.search('<wps:LiteralData DataType="string" UOM="meter">'
+                  + '(.*?)</wps:LiteralData>', line)
+            result_url = match.group(1)
+            break
+
+      filehandle.close()
+      return result_url 
