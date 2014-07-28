@@ -63,7 +63,7 @@ tbody tr:hover {
 
 #header .logo {
    float:left;
-   padding:20px 0;
+   padding:40px 0;
 }
 
 #header .menu {
@@ -76,6 +76,9 @@ tbody tr:hover {
 #header .menu li {
    float:left;
    margin-left:20px;
+   width:106px;
+   background:#2179cc;
+   text-align: center;
 }
 
 /* ==========================================================================

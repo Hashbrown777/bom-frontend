@@ -1,1 +1,16 @@
+/* ###############################################################
+ * LOGO
+ * ##############################################################*/
+
+
+.logo a{
+   font-family:Helvetica;
+   font-size:40px;
+   text-decoration: none;
+}
+
+#header .menu li .button{
+   padding:10px 10px;
+}
+
 
