@@ -10,6 +10,8 @@ class DataFile(models.Model):
       #order by relationship with computation
       ordering = ['computationdatafile__id']
 
+   cache_folder = 'climateanalyser/datafiles/'
+
    file_url = models.CharField(max_length=1000)
    cached_file = models.CharField(max_length=1000)
    last_modified = models.DateTimeField('last modified')
@@ -18,7 +20,7 @@ class DataFile(models.Model):
       #Create cache file
       self.cached_file = hashlib.md5(self.file_url).hexdigest()
       urllib.urlretrieve(self.file_url, 
-            'climateanalyser/datafiles/' + self.cached_file)
+            DataFile.cache_path + self.cached_file)
 
       self.last_modified = datetime.now()
       super(DataFile, self).save(*args, **kwargs)

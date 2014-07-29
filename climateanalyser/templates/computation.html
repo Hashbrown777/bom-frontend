@@ -53,7 +53,8 @@
       {% for datafile in computation.datafiles.all %}
          <tr>
             <td>{{ datafile.id }}</td>
-            <td><a href="{{ datafile.file_url }}">{{ datafile.file_url }}</a></td>
+            <!--<td><a href="{{ datafile.file_url }}">{{ datafile.file_url }}</a></td>-->
+            <td><a href="/load_cache?file={{ datafile.cached_file }}">{{ datafile.file_url }}</a></td>
          </tr>
       {% endfor %}
       </tbody>
