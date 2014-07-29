@@ -10,8 +10,6 @@ class DataFile(models.Model):
       #order by relationship with computation
       ordering = ['computationdatafile__id']
 
-   cache_folder = 'climateanalyser/datafiles/'
-
    file_url = models.CharField(max_length=1000)
    cached_file = models.CharField(max_length=1000)
    last_modified = models.DateTimeField('last modified')

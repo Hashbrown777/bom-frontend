@@ -72,7 +72,7 @@ def load_cache(request):
    file = request.GET.get('file')
 
    if file:
-      full_path = settings.BASE_DIR + '/' + DataFile.cache_folder + file
+      full_path = settings.DATAFILES_DIR + file
       response = StreamingHttpResponse(open(full_path))
       return response
 
