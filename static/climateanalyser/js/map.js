@@ -2,13 +2,21 @@
 
  $(window).ready(function(){
 
-   var map = L.map('map').setView([-37.81, 144.96], 2);
+   switch (calculation) {
+      case 'correlate':
+         calculation = 'correlation';
+         break;
+      case 'regress':
+         calculation = 'regression';
+         break;
+   }
 
+   var map = L.map('map').setView([-37.81, 144.96], 2);
    var layer = L.tileLayer.wms(resultPath, {
-            layers: 'correlation',
+            layers: calculation,
             format: 'image/png',   
             transparent: true,
-            attribution: "Sample weather data"
+            attribution: "Climate Analysis data"
             }).addTo(map);
 
    L.tileLayer('http://118.138.241.181/v2/CountryOutlines/{z}/{x}/{y}.png',{
