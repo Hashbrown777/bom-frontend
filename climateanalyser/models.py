@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 import hashlib
 import urllib
 import re
+import HTMLParser
 
 class DataFile(models.Model):
    class Meta:
@@ -105,19 +106,26 @@ class ZooAdapter():
       format -- format of result file. either 'wms', 'opendap', or 'ncfile'
       """
 
+      #file containing list of result links
       descriptor_file = ZooAdapter.get_descriptor_file(datafiles, calculation)
 
       result_url = ''
 
       filehandle = urllib.urlopen(descriptor_file)
 
-      regex = '<' + format + '>(.*?)</' + format + '>'
+      #find our result link
+
+      regex = '\[' + format + '\](.*?)\[/' + format + '\]'
 
       for line in filehandle.readlines():
-            match = re.search(regex, line)
-            if match:
-               result_url = match.group(1)
-               break
+         match = re.search(regex, line)
+         if match:
+            result_url = match.group(1)
+            break
+
+      # decode html entities
+      html_parser = HTMLParser.HTMLParser()
+      result_url = html_parser.unescape(result_url)
 
       filehandle.close()
-      return result_url 
+      return result_url
