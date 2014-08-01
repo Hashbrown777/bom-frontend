@@ -4,8 +4,7 @@
 
 <script type="text/javascript">
 
-   var resultPath = '{{ computation.result }}';
-   console.log(resultPath);
+   var resultPath = '{{ computation.result_wms }}';
 
 </script>
 {% load staticfiles %}
@@ -35,7 +34,7 @@
    </div>
    <div class="item result">
       <span class="key"><strong>Result</strong></span>
-      <span class="value"><a href="{{ computation.result }}">Download</a></span>
+      <span class="value"><a href="{{ computation.result_nc }}">Download as NC File</a></span>
    </div>
 
    <div id="map">
@@ -53,7 +52,6 @@
       {% for datafile in computation.datafiles.all %}
          <tr>
             <td>{{ datafile.id }}</td>
-            <!--<td><a href="{{ datafile.file_url }}">{{ datafile.file_url }}</a></td>-->
             <td><a href="/load_cache?file={{ datafile.cached_file }}">{{ datafile.file_url }}</a></td>
          </tr>
       {% endfor %}

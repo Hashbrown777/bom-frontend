@@ -24,32 +24,41 @@ class DataFile(models.Model):
       super(DataFile, self).save(*args, **kwargs)
 
 class Computation(models.Model):
-      created_by = models.ForeignKey(User)
-      created_date = models.DateTimeField('date created')
-      completed_date = models.DateTimeField('date completed',null=True,
-            blank=True)
+   created_by = models.ForeignKey(User)
+   created_date = models.DateTimeField('date created')
+   completed_date = models.DateTimeField('date completed',null=True,
+         blank=True)
 
-      CALCULATION_CHOICES = (
-            ('correlate', 'Correlate'),
-            ('regress', 'Regress'),
-      )
+   CALCULATION_CHOICES = (
+         ('correlate', 'Correlate'),
+         ('regress', 'Regress'),
+   )
 
-      calculation = models.CharField(max_length=100,
-            choices=CALCULATION_CHOICES, default='correlate')
+   calculation = models.CharField(max_length=100,
+         choices=CALCULATION_CHOICES, default='correlate')
 
-      datafiles = models.ManyToManyField(DataFile,through='ComputationDataFile')
+   datafiles = models.ManyToManyField(DataFile,through='ComputationDataFile')
 
-      #Get the URL of the result from Zoo.
-      def result(self):
-         return ZooAdapter.get_result(self.datafiles.all(), self.calculation)
+   def result_wms(self):
+      #Get the URL of the result from Zoo in WMS format
+      return ZooAdapter.get_result(self.datafiles.all(), self.calculation, 'wms')
 
-      def save(self, *args, **kwargs):
-         if self.created_date is None:
-            self.created_date = datetime.now()
-         super(Computation, self).save(*args, **kwargs)
+   def result_nc(self):
+      #Get the URL of the result from Zoo in NC format
+      return ZooAdapter.get_result(self.datafiles.all(), self.calculation, 'ncfile')
+
+   def result_opendap(self):
+      #Get the URL of the result from Zoo in Opendap format
+      return ZooAdapter.get_result(self.datafiles.all(), self.calculation, 'opendap')
+
+
+   def save(self, *args, **kwargs):
+      if self.created_date is None:
+         self.created_date = datetime.now()
+      super(Computation, self).save(*args, **kwargs)
 
 class ComputationDataFile(models.Model):
-   # This class used so we can have separate datafile order per computation
+   # This class is used so we can have separate datafile order per computation
    datafile = models.ForeignKey(DataFile)
    computation = models.ForeignKey(Computation)
 
@@ -57,7 +66,17 @@ class ZooAdapter():
 
    @staticmethod
    def get_descriptor_file(datafiles, calculation):
-      #Get the file that describes the result of our  computation
+      """Get the file that describes the result of our computation.
+
+      This page loads our result files, and returns a list of them (as well as
+      other information).
+
+      Note: at least two datafiles are required
+
+      Keyword arguments:
+      datafiles -- array of datafile objects to perform calculation on
+      calculation -- calculation we want to perform, eg 'correlate', 'regress'
+      """
 
       #must have at least two data files
       if len(datafiles) < 2:
@@ -77,8 +96,14 @@ class ZooAdapter():
       return descriptor_file
 
    @staticmethod
-   def get_result(datafiles, calculation):
-      #Get the url of the result file for the computation
+   def get_result(datafiles, calculation, format):
+      """Get the url of the result file for calculation performed on datafiles.
+
+      Keyword arguments:
+      datafiles -- array of datafile objects to perform calculation on
+      calculation -- calculation we want to perform, eg 'correlate', 'regress'
+      format -- format of result file. either 'wms', 'opendap', or 'ncfile'
+      """
 
       descriptor_file = ZooAdapter.get_descriptor_file(datafiles, calculation)
 
@@ -86,12 +111,13 @@ class ZooAdapter():
 
       filehandle = urllib.urlopen(descriptor_file)
 
+      regex = '<' + format + '>(.*?)</' + format + '>'
+
       for line in filehandle.readlines():
-         if line.find('.nc') > 0:
-            match = re.search('<wps:LiteralData DataType="string" UOM="meter">'
-                  + '(.*?)</wps:LiteralData>', line)
-            result_url = match.group(1)
-            break
+            match = re.search(regex, line)
+            if match:
+               result_url = match.group(1)
+               break
 
       filehandle.close()
       return result_url 
