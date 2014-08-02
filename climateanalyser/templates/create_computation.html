@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>New Computation</h1>
+<form action="/create_computation/" method="post">
+   {% csrf_token %}
+   {{ form.as_p }}
+   {{ formset.as_p }}
+   <input type="submit" value="Submit" class="button" />
+</form>
+
+{% endblock %}

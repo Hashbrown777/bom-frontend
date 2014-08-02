@@ -1,3 +1,4 @@
+'''
 from django.contrib import admin
 from django import forms
 from climateanalyser.models import Computation, DataFile
@@ -15,3 +16,4 @@ class ComputationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Computation, ComputationAdmin)
+'''

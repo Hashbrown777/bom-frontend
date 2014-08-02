@@ -10,48 +10,59 @@ from django.contrib import messages
 from django.http import StreamingHttpResponse
 from django.conf import settings
 
-#Default page
 def index(request):
+   #Default page
    t = loader.get_template('index.html')
    context = RequestContext(request, {})
    html = t.render(context)
    return HttpResponse(html)
 
-def compute(request): 
-#Form for creating new computation
+def create_computation(request): 
+   #Form for creating new computation
    
-   user = request.user
+   ComputationFormSet = inlineformset_factory(Computation, ComputationData)
+   form = ComputationForm()
+   formset = ComputationFormSet()
 
-   if (user.is_authenticated() == False):
-      messages.error(request, 'You must login to view that page.')
-      return HttpResponseRedirect('/login')
+   return render(request, 'create_computation.html', 
+         { 'form' : form, 'formset' : formset, })
 
-   form = ComputationForm(request.POST)
-
-   if request.method == 'POST':
-
-      if form.is_valid():
-
-         form.save(user)
-         
-         messages.success(request, 'Computation  successfully created!')
-
-         #return to computations page
-         return HttpResponseRedirect('/computations?user=' + user.username)
-
-   else:
-      form = ComputationForm()
-
-   return render(request, 'compute_form.html', { 'form' : form, })
-
-#display single computation
 def computation(request):
+   #display single computation
    computation = Computation.objects.get(id=request.GET.get('id'))
 
    return render(request, 'computation.html', {'computation': computation})
 
-#View list of computations in the system
+def datafiles(request): 
+
+   return render(request, 'datafiles.html', { 'datafiles' : DataFile.objects.filter() })
+
+def create_datafile(request):
+
+   if (request.user.is_authenticated() == False):
+      messages.error(request, 'You must login to view that page.')
+      return HttpResponseRedirect('/login')
+
+   if request.method == 'POST':
+
+      form = DataFileForm(request.POST)
+
+      if form.is_valid():
+
+         form.save()
+
+         messages.success(request, 'Data File successfully created!')
+         return HttpResponseRedirect('/datafiles')
+      
+   else:
+      form = DataFileForm()
+
+   return render(request, 'create_datafile.html', { 'form' : form })
+
+   
+
 def computations(request):
+   #View list of computations in the system
 
    template_params = {}
 
