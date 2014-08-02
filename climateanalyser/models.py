@@ -26,6 +26,9 @@ class DataFile(models.Model):
       self.last_modified = datetime.now()
       super(DataFile, self).save(*args, **kwargs)
 
+   def __str__(self):
+      return self.file_url
+
 class Computation(models.Model):
    created_by = models.ForeignKey(User)
    created_date = models.DateTimeField('date created')

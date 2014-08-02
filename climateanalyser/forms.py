@@ -15,9 +15,7 @@ class ComputationDataForm(ModelForm):
       model = ComputationData
       fields = ['datafile', 'variables']
 
-
 class ComputationForm(ModelForm):
    class Meta:
       model = Computation
       fields = ['calculation']
-

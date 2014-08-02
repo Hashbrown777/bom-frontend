@@ -17,25 +17,9 @@ def index(request):
    html = t.render(context)
    return HttpResponse(html)
 
-def create_computation(request): 
-   #Form for creating new computation
-   
-   ComputationFormSet = inlineformset_factory(Computation, ComputationData)
-   form = ComputationForm()
-   formset = ComputationFormSet()
-
-   return render(request, 'create_computation.html', 
-         { 'form' : form, 'formset' : formset, })
-
-def computation(request):
-   #display single computation
-   computation = Computation.objects.get(id=request.GET.get('id'))
-
-   return render(request, 'computation.html', {'computation': computation})
-
 def datafiles(request): 
-
-   return render(request, 'datafiles.html', { 'datafiles' : DataFile.objects.filter() })
+   return render(request, 'datafiles.html', { 'datafiles' : 
+         DataFile.objects.filter() })
 
 def create_datafile(request):
 
@@ -59,7 +43,22 @@ def create_datafile(request):
 
    return render(request, 'create_datafile.html', { 'form' : form })
 
+def create_computation(request): 
+   #Form for creating new computation
    
+   ComputationFormSet = inlineformset_factory(Computation, ComputationData,
+         form=ComputationDataForm)
+   form = ComputationForm()
+   formset = ComputationFormSet()
+
+   return render(request, 'create_computation.html', 
+         { 'form' : form, 'formset' : formset, })
+
+def computation(request):
+   #display single computation
+   computation = Computation.objects.get(id=request.GET.get('id'))
+
+   return render(request, 'computation.html', {'computation': computation})
 
 def computations(request):
    #View list of computations in the system
