@@ -42,7 +42,6 @@
 }
 
 #id_username, #id_password{
-   border-radius: 6px;
    height:20px;
 }
 
@@ -54,7 +53,6 @@
 #main .wrapper form > input{
    width:90px;
    padding:6px;
-   border-radius:5px;
    border:none;
    margin:10px 0 0 5px;
    background:#2179cc;
