@@ -1,6 +1,6 @@
 from django.conf.urls import url
-
 from climateanalyser import views
+from climateanalyser import ajax
 
 urlpatterns = [
    url(r'^$', views.index, name='index'),
@@ -10,4 +10,5 @@ urlpatterns = [
    url(r'^computations/$', views.computations, name='computations'),
    url(r'^computation$', views.computation, name='computation'),
    url(r'^load_cache$', views.load_cache, name='load_cache'),
+   url(r'^load_datafile_metadata$', ajax.load_datafile_metadata, name='load_datafile_metadata'),
 ]

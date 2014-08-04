@@ -1,18 +1,18 @@
 from django.conf import settings
 from datetime import datetime
 from django.db import models
-from fields import JSONField 
 from django.contrib.auth.models import User
 import hashlib, urllib, re, HTMLParser 
+import pprint
+from jsonfield import JSONField
 
 class DataFile(models.Model):
    file_url = models.CharField(max_length=1000,unique=True)
    cached_file = models.CharField(max_length=1000)
    last_modified = models.DateTimeField('last modified')
-   dds_info = JSONField(max_length=1000)
-   das_info = JSONField(max_length=1000)
+   metadata = JSONField()
 
-   def save(self, *args, **kwargs):
+   def clean(self):
       #Create cached file and save data
 
       #file name is md5 string of url
@@ -20,13 +20,15 @@ class DataFile(models.Model):
       urllib.urlretrieve(self.file_url, 
             settings.CACHE_DIR + self.cached_file)
 
-      self.dds_info = ZooAdapter.get_datafile_info(self.file_url, 'dds')
-      self.das_info = ZooAdapter.get_datafile_info(self.file_url, 'das')
+      self.metadata = ZooAdapter.get_datafile_metadata(self.file_url)
 
       self.last_modified = datetime.now()
-      super(DataFile, self).save(*args, **kwargs)
 
-   def __str__(self):
+   def get_variables(self):
+      #omit first item as it is datafile
+      return self.metadata.keys()[1:]
+
+   def __unicode__(self):
       return self.file_url
 
 class Computation(models.Model):
@@ -57,29 +59,38 @@ class Computation(models.Model):
       return ZooAdapter.get_result(self.data.all(), self.calculation, 'opendap')
    '''
 
-   def save(self, *args, **kwargs):
-      if self.created_date is None:
-         self.created_date = datetime.now()
-      super(Computation, self).save(*args, **kwargs)
+   def clean(self):
+      self.created_date = datetime.now()
+
+   def get_computationdata(self):
+      return ComputationData.objects.filter(computation=self)
 
 class ComputationData(models.Model):
    datafile = models.ForeignKey(DataFile)   
    computation = models.ForeignKey(Computation)
-   variables = JSONField(max_length=1000)
+   variables = JSONField()
+
+   def clean(self):
+
+      # make sure selected variables exist in datafile
+      for variable in self.variables:
+         if variable not in self.datafile.get_variables():
+            raise ValidationError('Variable does not exist in Data File.')
+
+   def get_variables(self):
+      return self.variables
 
 class ZooAdapter():
 
    @staticmethod
-   def get_datafile_info(url,type):
-      """Get info about datafile, such as variables, attributes, as JSON.
-
+   def get_datafile_metadata(url):
+      """Get datafile metadata in JSON format
+         
       Keyword arguments:
       url -- datafile remote url
-      type -- type of data to get. currently 'dds' or 'das'
       """
 
-      filehandle = urllib.urlopen('http://115.146.84.143:8080/thredds/dodsC/'
-            + 'datafiles/outputs/correlate_sample_1D_sample_3D.nc.' + type)
+      filehandle = urllib.urlopen('http://130.56.248.143/samples/sample_3D-Metadata.txt')
 
       data = filehandle.read()
 

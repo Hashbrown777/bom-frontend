@@ -43,13 +43,30 @@ def create_datafile(request):
 
    return render(request, 'create_datafile.html', { 'form' : form })
 
-def create_computation(request): 
+def create_computation(request, computation_pk=None): 
    #Form for creating new computation
+
+   if computation_pk:
+      computation = Computation.objects.get(pk=computation_pk)
+   else:
+      computation = Computation()
    
    ComputationFormSet = inlineformset_factory(Computation, ComputationData,
-         form=ComputationDataForm)
-   form = ComputationForm()
-   formset = ComputationFormSet()
+         form=ComputationDataForm,extra=2)
+  
+   if request.method == 'POST':
+      form = ComputationForm(request.POST,instance=computation)
+      formset = ComputationFormSet(request.POST,instance=computation)
+
+      if form.is_valid() and formset.is_valid():
+         form.save()
+         formset.save()
+         messages.success(request, 'Computation successfully created!')
+         return HttpResponseRedirect('/computations')
+
+   else:
+      form = ComputationForm(initial={ 'created_by': request.user },instance=computation)
+      formset = ComputationFormSet(instance=computation)
 
    return render(request, 'create_computation.html', 
          { 'form' : form, 'formset' : formset, })
@@ -82,7 +99,7 @@ def load_cache(request):
    file = request.GET.get('file')
 
    if file:
-      full_path = settings.DATAFILES_DIR + file
+      full_path = settings.CACHE_DIR + file
       response = StreamingHttpResponse(open(full_path))
       return response
 

@@ -47,13 +47,15 @@
          <tr>
             <th>ID</th>
             <th>Path</th>
+            <th>Variables</th>
          </tr>
       </thead>
       <tbody>
-      {% for datafile in computation.datafiles.all %}
+      {% for computationdata in computation.get_computationdata.all %}
          <tr>
-            <td>{{ datafile.id }}</td>
-            <td><a href="/load_cache?file={{ datafile.cached_file }}">{{ datafile.file_url }}</a></td>
+            <td>{{ computationdata.datafile.id }}</td>
+            <td><a href="/load_cache?file={{ computationdata.datafile.cached_file }}">{{ computationdata.datafile.file_url }}</a></td>
+            <td>{{ computationdata.get_variables }}</td>
          </tr>
       {% endfor %}
       </tbody>
