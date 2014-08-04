@@ -2,6 +2,7 @@ from climateanalyser.models import Computation,DataFile
 from django.forms import ModelForm
 from django import forms
 from fields import DataFilesField
+from models import ComputationDataFile
 
 class ComputationForm(ModelForm):
    datafiles = DataFilesField()
@@ -25,14 +26,20 @@ class ComputationForm(ModelForm):
       #remove relationships with existing datafiles but don't delete them!
       self.instance.datafiles.clear()
 
+      print 'data files: '
+      print self.cleaned_data['datafiles']
+
       for file_url in self.cleaned_data['datafiles']:
-         
+
          datafile = DataFile.objects.filter(file_url=file_url)
    
          if datafile:
             #add existing datafile instance
-            self.instance.datafiles.add(datafile[0])
+            datafile = datafile[0]
          else:
+            datafile = DataFile(file_url=file_url)
+            datafile.save()
             #new datafile
-            self.instance.datafiles.create(file_url=file_url)
   
+         ComputationDataFile.objects.create(computation=self.instance,
+            datafile=datafile)
