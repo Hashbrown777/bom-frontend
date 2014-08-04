@@ -10,4 +10,7 @@ class ClimateAnalyserUser(models.Model):
    def get_computations():
       #return all computations
       print 'cool and fun times'
-
+   
+   def userCreateForm():
+      #return all computations
+      print 'cool and fun times'

@@ -7,6 +7,8 @@ from django.http import HttpResponseRedirect
 from forms import *
 from models import *
 from django.contrib import messages
+from django.http import StreamingHttpResponse
+from django.conf import settings
 
 #Default page
 def index(request):
@@ -22,7 +24,7 @@ def compute(request):
 
    if (user.is_authenticated() == False):
       messages.error(request, 'You must login to view that page.')
-      return HttpResponseRedirect('/auth/login')
+      return HttpResponseRedirect('/login')
 
    form = ComputationForm(request.POST)
 
@@ -54,7 +56,7 @@ def computations(request):
    template_params = {}
 
    #Filter for current user
-   if (request.GET.get('show_mine')):
+   if request.GET.get('show_mine'):
       user = request.user
       template_params['computations'] = Computation.objects.filter(
             created_by=user)
@@ -65,3 +67,13 @@ def computations(request):
 
    return render(request, 'computations.html', template_params)
 
+def load_cache(request):
+
+   file = request.GET.get('file')
+
+   if file:
+      full_path = settings.DATAFILES_DIR + file
+      response = StreamingHttpResponse(open(full_path))
+      return response
+
+   return HttpResponse('')
