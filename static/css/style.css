@@ -63,6 +63,10 @@
    color:white;
 }
 
+#id_calculation{
+   width:222px;
+}
+
 #main .wrapper form > input:hover{
    background:#1a63a9;
 }
