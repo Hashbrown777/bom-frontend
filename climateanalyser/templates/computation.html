@@ -4,11 +4,13 @@
 
 <script type="text/javascript">
 
-   var resultPath = '{{ computation.result_wms }}';
+   var resultPath = '{{ computation.result_wms | safe}}';
    var calculation = '{{ computation.calculation }}';
 
 </script>
 {% load staticfiles %}
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 <script src="{% static "climateanalyser/js/map.js" %}"></script>
 
 

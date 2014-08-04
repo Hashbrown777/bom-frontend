@@ -45,25 +45,23 @@ class Computation(models.Model):
    calculation = models.CharField(max_length=100,
          choices=CALCULATION_CHOICES, default='correlate')
 
-   '''
    def result_wms(self):
       #Get the URL of the result from Zoo in WMS format
-      return ZooAdapter.get_result(self.data.all(), self.calculation, 'wms')
+      return ZooAdapter.get_result(self.get_computationdata().all(), self.calculation, 'wms')
 
    def result_nc(self):
       #Get the URL of the result from Zoo in NC format
-      return ZooAdapter.get_result(self.data.all(), self.calculation, 'ncfile')
+      return ZooAdapter.get_result(self.get_computationdata().all(), self.calculation, 'ncfile')
 
    def result_opendap(self):
       #Get the URL of the result from Zoo in Opendap format
-      return ZooAdapter.get_result(self.data.all(), self.calculation, 'opendap')
-   '''
+      return ZooAdapter.get_result(self.get_computationdata().all(), self.calculation, 'opendap')
 
    def clean(self):
       self.created_date = datetime.now()
 
    def get_computationdata(self):
-      return ComputationData.objects.filter(computation=self)
+      return ComputationData.objects.filter(computation=self).order_by('id')
 
 class ComputationData(models.Model):
    datafile = models.ForeignKey(DataFile)   
@@ -100,7 +98,7 @@ class ZooAdapter():
 
 
    @staticmethod
-   def get_descriptor_file(datafiles, calculation):
+   def get_descriptor_file(computationdata_list, calculation):
       """Get the file that describes the result of our computation.
 
       This page loads our result files, and returns a list of them (as well as
@@ -114,7 +112,8 @@ class ZooAdapter():
       """
 
       #must have at least two data files
-      if len(datafiles) < 2:
+      #TODO: exception?
+      if len(computationdata_list) < 2:
          return;
 
       descriptor_file = ('http://130.56.248.143/cgi-bin/zoo_loader.cgi?request='
@@ -122,8 +121,8 @@ class ZooAdapter():
                      'Operation&DataInputs=selection=' + calculation + ';urls=')
 
       #append all data files
-      for datafile in datafiles:
-         descriptor_file += datafile.file_url + ','
+      for computationdata in computationdata_list:
+         descriptor_file += computationdata.datafile.file_url + ','
 
       #Remove trailing comma
       descriptor_file = descriptor_file[:-1]
@@ -131,7 +130,7 @@ class ZooAdapter():
       return descriptor_file
 
    @staticmethod
-   def get_result(datafiles, calculation, format):
+   def get_result(computationdata_list, calculation, format):
       """Get the url of the result file for calculation performed on datafiles.
 
       Keyword arguments:
@@ -141,7 +140,7 @@ class ZooAdapter():
       """
 
       #file containing list of result links
-      descriptor_file = ZooAdapter.get_descriptor_file(datafiles, calculation)
+      descriptor_file = ZooAdapter.get_descriptor_file(computationdata_list, calculation)
 
       result_url = ''
 
