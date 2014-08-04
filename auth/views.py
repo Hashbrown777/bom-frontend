@@ -42,10 +42,17 @@ def register(request):
 
 def change_password(request):
    if request.user.is_authenticated():
-      #form = UserChangePasswordForm()
       t = loader.get_template('changepassword.html')
       context = RequestContext(request, { 'text':text })
       html = t.render(context)
       return HttpResponse(html)
    else:
       return HttpResponseRedirect('/auth/login')
+
+def profile(request):
+   profile = request.user
+   t = loader.get_template('profile.html')
+   context = RequestContext(request, { 'profile':profile })
+   html = t.render(context)
+   return HttpResponse(html)
+
