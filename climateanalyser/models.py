@@ -47,15 +47,18 @@ class Computation(models.Model):
 
    def result_wms(self):
       #Get the URL of the result from Zoo in WMS format
-      return ZooAdapter.get_result(self.get_computationdata().all(), self.calculation, 'wms')
+      return ZooAdapter.get_result(self.get_computationdata().all(), 
+            self.calculation, 'wms')
 
    def result_nc(self):
       #Get the URL of the result from Zoo in NC format
-      return ZooAdapter.get_result(self.get_computationdata().all(), self.calculation, 'ncfile')
+      return ZooAdapter.get_result(self.get_computationdata().all(), 
+            self.calculation, 'ncfile')
 
    def result_opendap(self):
       #Get the URL of the result from Zoo in Opendap format
-      return ZooAdapter.get_result(self.get_computationdata().all(), self.calculation, 'opendap')
+      return ZooAdapter.get_result(self.get_computationdata().all(), 
+            self.calculation, 'opendap')
 
    def clean(self):
       self.created_date = datetime.now()
@@ -69,14 +72,10 @@ class ComputationData(models.Model):
    variables = JSONField()
 
    def clean(self):
-
       # make sure selected variables exist in datafile
       for variable in self.variables:
          if variable not in self.datafile.get_variables():
             raise ValidationError('Variable does not exist in Data File.')
-
-   def get_variables(self):
-      return self.variables
 
 class ZooAdapter():
 
@@ -88,7 +87,8 @@ class ZooAdapter():
       url -- datafile remote url
       """
 
-      filehandle = urllib.urlopen('http://130.56.248.143/samples/sample_3D-Metadata.txt')
+      filehandle = urllib.urlopen('http://130.56.248.143/samples/'
+            + 'sample_3D-Metadata.txt')
 
       data = filehandle.read()
 
@@ -140,7 +140,8 @@ class ZooAdapter():
       """
 
       #file containing list of result links
-      descriptor_file = ZooAdapter.get_descriptor_file(computationdata_list, calculation)
+      descriptor_file = ZooAdapter.get_descriptor_file(computationdata_list, 
+            calculation)
 
       result_url = ''
 

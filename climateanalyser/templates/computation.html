@@ -55,9 +55,9 @@
       <tbody>
       {% for computationdata in computation.get_computationdata.all %}
          <tr>
-            <td>{{ computationdata.datafile.id }}</td>
+            <td>{{ computationdata.id }}</td>
             <td><a href="/load_cache?file={{ computationdata.datafile.cached_file }}">{{ computationdata.datafile.file_url }}</a></td>
-            <td>{{ computationdata.get_variables }}</td>
+            <td>{{ computationdata.variables | join:', '}}</td>
          </tr>
       {% endfor %}
       </tbody>

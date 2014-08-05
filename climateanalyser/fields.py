@@ -10,4 +10,3 @@ class VariablesMultiField(forms.MultipleChoiceField):
       """
 
       return value
-
