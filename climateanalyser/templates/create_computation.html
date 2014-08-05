@@ -2,12 +2,12 @@
 
 {% block content %}
 
-<h1>Compute Data</h1>
-<form action="/compute/" method="post">
+<h1>New Computation</h1>
+<form class="new_computation" action="/create_computation/" method="post">
+   {{ formset.media }}
    {% csrf_token %}
    {{ form.as_p }}
-   <div id="data_file_container">
-   </div>
+   {{ formset.as_p }}
    <input type="submit" value="Submit" class="button" />
 </form>
 

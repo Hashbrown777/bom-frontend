@@ -1,28 +1,35 @@
+from django.conf import settings
 from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
-import hashlib
-import urllib
-import re
-import HTMLParser
+import hashlib, urllib, re, HTMLParser 
+import pprint
+from jsonfield import JSONField
 
 class DataFile(models.Model):
-   class Meta:
-      #order by relationship with computation
-      ordering = ['computationdatafile__id']
-
-   file_url = models.CharField(max_length=1000)
+   file_url = models.CharField(max_length=1000,unique=True)
    cached_file = models.CharField(max_length=1000)
    last_modified = models.DateTimeField('last modified')
+   metadata = JSONField()
 
-   def save(self, *args, **kwargs):
-      #Create cache file
+   def clean(self):
+      #Create cached file and save data
+
+      #file name is md5 string of url
       self.cached_file = hashlib.md5(self.file_url).hexdigest()
       urllib.urlretrieve(self.file_url, 
-            DataFile.cache_path + self.cached_file)
+            settings.CACHE_DIR + self.cached_file)
+
+      self.metadata = ZooAdapter.get_datafile_metadata(self.file_url)
 
       self.last_modified = datetime.now()
-      super(DataFile, self).save(*args, **kwargs)
+
+   def get_variables(self):
+      #omit first item as it is datafile
+      return self.metadata.keys()[1:]
+
+   def __unicode__(self):
+      return self.file_url
 
 class Computation(models.Model):
    created_by = models.ForeignKey(User)
@@ -38,35 +45,60 @@ class Computation(models.Model):
    calculation = models.CharField(max_length=100,
          choices=CALCULATION_CHOICES, default='correlate')
 
-   datafiles = models.ManyToManyField(DataFile,through='ComputationDataFile')
-
    def result_wms(self):
       #Get the URL of the result from Zoo in WMS format
-      return ZooAdapter.get_result(self.datafiles.all(), self.calculation, 'wms')
+      return ZooAdapter.get_result(self.get_computationdata().all(), 
+            self.calculation, 'wms')
 
    def result_nc(self):
       #Get the URL of the result from Zoo in NC format
-      return ZooAdapter.get_result(self.datafiles.all(), self.calculation, 'ncfile')
+      return ZooAdapter.get_result(self.get_computationdata().all(), 
+            self.calculation, 'ncfile')
 
    def result_opendap(self):
       #Get the URL of the result from Zoo in Opendap format
-      return ZooAdapter.get_result(self.datafiles.all(), self.calculation, 'opendap')
+      return ZooAdapter.get_result(self.get_computationdata().all(), 
+            self.calculation, 'opendap')
 
+   def clean(self):
+      self.created_date = datetime.now()
 
-   def save(self, *args, **kwargs):
-      if self.created_date is None:
-         self.created_date = datetime.now()
-      super(Computation, self).save(*args, **kwargs)
+   def get_computationdata(self):
+      return ComputationData.objects.filter(computation=self).order_by('id')
 
-class ComputationDataFile(models.Model):
-   # This class is used so we can have separate datafile order per computation
-   datafile = models.ForeignKey(DataFile)
+class ComputationData(models.Model):
+   datafile = models.ForeignKey(DataFile)   
    computation = models.ForeignKey(Computation)
+   variables = JSONField()
+
+   def clean(self):
+      # make sure selected variables exist in datafile
+      for variable in self.variables:
+         if variable not in self.datafile.get_variables():
+            raise ValidationError('Variable does not exist in Data File.')
 
 class ZooAdapter():
 
    @staticmethod
-   def get_descriptor_file(datafiles, calculation):
+   def get_datafile_metadata(url):
+      """Get datafile metadata in JSON format
+         
+      Keyword arguments:
+      url -- datafile remote url
+      """
+
+      filehandle = urllib.urlopen('http://130.56.248.143/samples/'
+            + 'sample_3D-Metadata.txt')
+
+      data = filehandle.read()
+
+      filehandle.close()
+
+      return data
+
+
+   @staticmethod
+   def get_descriptor_file(computationdata_list, calculation):
       """Get the file that describes the result of our computation.
 
       This page loads our result files, and returns a list of them (as well as
@@ -80,7 +112,8 @@ class ZooAdapter():
       """
 
       #must have at least two data files
-      if len(datafiles) < 2:
+      #TODO: exception?
+      if len(computationdata_list) < 2:
          return;
 
       descriptor_file = ('http://130.56.248.143/cgi-bin/zoo_loader.cgi?request='
@@ -88,8 +121,8 @@ class ZooAdapter():
                      'Operation&DataInputs=selection=' + calculation + ';urls=')
 
       #append all data files
-      for datafile in datafiles:
-         descriptor_file += datafile.file_url + ','
+      for computationdata in computationdata_list:
+         descriptor_file += computationdata.datafile.file_url + ','
 
       #Remove trailing comma
       descriptor_file = descriptor_file[:-1]
@@ -97,7 +130,7 @@ class ZooAdapter():
       return descriptor_file
 
    @staticmethod
-   def get_result(datafiles, calculation, format):
+   def get_result(computationdata_list, calculation, format):
       """Get the url of the result file for calculation performed on datafiles.
 
       Keyword arguments:
@@ -107,7 +140,8 @@ class ZooAdapter():
       """
 
       #file containing list of result links
-      descriptor_file = ZooAdapter.get_descriptor_file(datafiles, calculation)
+      descriptor_file = ZooAdapter.get_descriptor_file(computationdata_list, 
+            calculation)
 
       result_url = ''
 

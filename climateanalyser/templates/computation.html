@@ -4,11 +4,13 @@
 
 <script type="text/javascript">
 
-   var resultPath = '{{ computation.result_wms }}';
+   var resultPath = '{{ computation.result_wms | safe}}';
    var calculation = '{{ computation.calculation }}';
 
 </script>
 {% load staticfiles %}
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 <script src="{% static "climateanalyser/js/map.js" %}"></script>
 
 
@@ -47,13 +49,15 @@
          <tr>
             <th>ID</th>
             <th>Path</th>
+            <th>Variables</th>
          </tr>
       </thead>
       <tbody>
-      {% for datafile in computation.datafiles.all %}
+      {% for computationdata in computation.get_computationdata.all %}
          <tr>
-            <td>{{ datafile.id }}</td>
-            <td><a href="/load_cache?file={{ datafile.cached_file }}">{{ datafile.file_url }}</a></td>
+            <td>{{ computationdata.id }}</td>
+            <td><a href="/load_cache?file={{ computationdata.datafile.cached_file }}">{{ computationdata.datafile.file_url }}</a></td>
+            <td>{{ computationdata.variables | join:', '}}</td>
          </tr>
       {% endfor %}
       </tbody>
