@@ -130,3 +130,8 @@ tbody tr:hover {
 .controls .button.all_computations {
    margin-right:20px;
 }
+
+.view_controls {
+   display:block;
+   float:right;
+}

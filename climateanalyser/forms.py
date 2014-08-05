@@ -1,45 +1,33 @@
 from climateanalyser.models import Computation,DataFile
 from django.forms import ModelForm
 from django import forms
-from fields import DataFilesField
-from models import ComputationDataFile
+from models import ComputationData
+from django.forms.formsets import formset_factory
+from django.forms.models import inlineformset_factory
+from django.conf import settings
+from django.contrib.auth.models import User 
+from django.http import HttpResponse
+from fields import VariablesMultiField
+import json
+
+class DataFileForm(ModelForm):
+   class Meta:
+      model = DataFile
+      fields = ['file_url']
+
+class ComputationDataForm(ModelForm):
+   variables = VariablesMultiField()
+
+   class Meta:
+      model = ComputationData
+      fields = ['datafile', 'variables','computation']
+
+   class Media:
+      js = ('climateanalyser/js/computationdataform.js',)
 
 class ComputationForm(ModelForm):
-   datafiles = DataFilesField()
+   created_by = forms.ModelChoiceField(queryset=User.objects.all(),
+         widget=forms.HiddenInput())
    class Meta:
       model = Computation
-      fields = ['calculation','datafiles']
-
-   def save(self,user=False,commit=True):
-
-      if not self.instance.id:
-         self.instance = Computation(created_by = user,
-              calculation = self.cleaned_data['calculation'])
-         self.instance.save()
-         self.save_m2m()
-
-      return self.instance
-
-   def save_m2m(self):
-      #Save DataFiles
-
-      #remove relationships with existing datafiles but don't delete them!
-      self.instance.datafiles.clear()
-
-      print 'data files: '
-      print self.cleaned_data['datafiles']
-
-      for file_url in self.cleaned_data['datafiles']:
-
-         datafile = DataFile.objects.filter(file_url=file_url)
-   
-         if datafile:
-            #add existing datafile instance
-            datafile = datafile[0]
-         else:
-            datafile = DataFile(file_url=file_url)
-            datafile.save()
-            #new datafile
-  
-         ComputationDataFile.objects.create(computation=self.instance,
-            datafile=datafile)
+      fields = ['calculation','created_by']

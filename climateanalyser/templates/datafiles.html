@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Data Files</h1>
+
+<div class="controls">
+{% if user.username %}
+   <a href="/create_datafile" class="button my_computations
+      {% if show_mine %} disabled {% endif %}">New Data File</a>
+{% endif %}
+</div>
+
+<table class="datafiles">
+   <thead>
+      <tr>
+         <th>ID</th>
+         <th>URL</th>
+         <th>Last updated</th>
+         <th>Download</th>
+      </tr>
+   </thead>
+   <tbody>
+   {% for datafile in datafiles %}
+      <tr>
+         <td>#{{ datafile.id }}</td>
+         <td>{{ datafile.file_url }}</td>
+         <td>{{ datafile.last_modified }}</td>
+         <td><a href="/load_cache?file={{ datafile.cached_file }}">Download</a>
+         </td>
+      </tr>
+   {% endfor %}
+   </tbody>
+</table>
+
+{% endblock %}
