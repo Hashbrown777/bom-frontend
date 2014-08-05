@@ -27,8 +27,8 @@
  * ############################################################# */
 
 #main .wrapper td{
-   border-top:0px;
-   padding:5px;
+   border-top:1px solid #ccc;
+   padding:20px;
 }
 
 #main .wrapper .computations td{
@@ -70,10 +70,6 @@
 
 #main .wrapper form > input:hover{
    background:#1a63a9;
-}
-
-tbody tr:hover{
-   background-color:transparent;
 }
 
 #main .wrapper form label{
