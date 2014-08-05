@@ -4,16 +4,21 @@
 
       var $form = $("form");
 
-      $form.find("select:not([multiple])").change(function(){
+      /**
+       * Populate the variables multi-selectbox based on the selected datafile.
+       *
+       * Will make an ajax call to get list of variables to use.
+       */
+      function populateVariables(datafileSelect){
 
          // ignore "-----" option
-         if (!$(this).val()){
+         if (!$(datafileSelect).val()){
             return;
          }
 
          // get multi-selectbox for variables
-         var $variablesSelect = $("#" + $(this).attr("id").replace("datafile",
-               "variables"));
+         var $variablesSelect = $("#" + $(datafileSelect).attr("id")
+               .replace("datafile", "variables"));
          
          $variablesSelect.html("");
 
@@ -23,7 +28,7 @@
             dataType : "json",
             url : "/load_datafile_metadata",
             data : { 
-               id : $(this).val(),
+               id : $(datafileSelect).val(),
                csrfmiddlewaretoken : $.cookie("csrftoken")
             }
          }).done(function(response){
@@ -34,8 +39,16 @@
                   + response[i] + "</option>");
             }
          });
+      };
 
+      $form.find("select[id$=datafile]").change(function(){
+         //Load variables each time datafile changes
+         populateVariables(this);
+      }).each(function(){ 
+         //if we need to populate variables selectbox on page load
+         populateVariables(this);
       });
+
 
    });
 
