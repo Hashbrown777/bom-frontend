@@ -26,9 +26,9 @@
  * COMPUTE DATA AND MAIN PAGE
  * ############################################################# */
 
-#main .wrapper td{
-   border-top:1px solid #ccc;
-   padding:20px;
+#main .wrapper .login_form td{
+   border-top:0px;
+   padding:10px 0px;
 }
 
 #main .wrapper .computations td{
@@ -57,8 +57,8 @@
 #main .wrapper form > input{
    width:90px;
    padding:10px;
+   margin-top:10px;
    border:none;
-   margin:10px 0 0 5px;
    background:#2179cc;
    color:white;
    outline:0px;
