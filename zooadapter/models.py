@@ -1,7 +1,33 @@
 from django.db import models
 import HTMLParser, re
+from solo.models import SingletonModel
+import urllib
+
+class ZooAdapterConfig(SingletonModel):
+   zoo_server_address = models.CharField(max_length=255)
+   thredds_server_address = models.CharField(max_length=255)
+
+   def get_zoo_server_address(self):
+      """ Return zoo server address ready for use."""
+      return self._prepare_address(self.zoo_server_address)
+
+   def get_thredds_server_address(self):
+      """ Return thredds server address ready for use."""
+      return self._prepare_address(self.thredds_server_address)
+
+   def _prepare_address(self, address):
+      """ Return address ready for use."""
+      if address[:3] is not 'http':
+         return 'http://' + address
+      return address
+
+
+   def __unicode__(self):
+      return u"Zoo Adapter Configuration"
 
 class ZooAdapter():
+
+   config = ZooAdapterConfig.objects.get()
 
    @staticmethod
    def get_datafile_metadata(url):
@@ -11,8 +37,8 @@ class ZooAdapter():
       url -- datafile remote url
       """
 
-      filehandle = urllib.urlopen('http://130.56.248.143/samples/'
-            + 'sample_3D-Metadata.txt')
+      filehandle = urllib.urlopen(ZooAdapter.confic.get_zoo_server_address() +
+            '/samples/sample_3D-Metadata.txt')
 
       data = filehandle.read()
       filehandle.close()
@@ -37,9 +63,10 @@ class ZooAdapter():
       if len(computationdata_list) < 2:
          return;
 
-      descriptor_file = ('http://130.56.248.143/cgi-bin/zoo_loader.cgi?request='
-                     'Execute&service=WPS&version=1.0.0.0&identifier='
-                     'Operation&DataInputs=selection=' + calculation + ';urls=')
+      descriptor_file = (ZooAdapter.config.get_zoo_server_address() +
+            '/cgi-bin/zoo_loader.cgi?request=Execute&service=WPS'
+            '&version=1.0.0.0&identifier='
+            'Operation&DataInputs=selection=' + calculation + ';urls=')
 
       #append all data files
       for computationdata in computationdata_list:
