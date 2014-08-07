@@ -1,0 +1,5 @@
+.submit-row input[name=_save],
+.submit-row input[name=_addanother],
+.submit-row input[name=_continue] {
+   display:none;
+}

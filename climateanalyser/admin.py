@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django import forms
 from django.forms import ModelForm
-from climateanalyser.models import Computation,DataFile,ComputationData
-from forms import ComputationForm,ComputationDataForm,DataFileForm
+from climateanalyser.models import *
+from forms import *
 
 class ComputationDataInline(admin.StackedInline):
    model = ComputationData
@@ -22,14 +22,27 @@ class ComputationAdmin(admin.ModelAdmin):
    form = AdminComputationForm
    list_display = ('id', 'created_by', 'created_date', 'completed_date')
 
-class DataFileAdmin(admin.ModelAdmin):
-   list_display = ['id','file_url','cached_file','last_modified']
-   fields = ['file_url']
+class AdminDataFileForm(DataFileForm):
+   class Media:
+      # css to hide save buttons (should only show on edit form)
+      css = { 'all' : ('climateanalyser/css/admindatafileform.css',) }
 
-   def __init__(self, *args, **kwargs):
-      super(DataFileAdmin, self).__init__(*args, **kwargs)
-      # disable edit link (we only want to allow add/delete)
-      self.list_display_links = (None, )
+class DataFileAdmin(admin.ModelAdmin):
+   form = AdminDataFileForm
+   list_display = ['id','file_url','cached_file','last_modified']
+
+   def get_form(self, request, obj=None, **kwargs):
+      if obj: # edit form
+         # make edit form a read-only 'profile' page
+         self.form.fields = ['file_url', 'last_modified', 'cached_file', 'metadata']
+         self.readonly_fields = ('file_url', 'last_modified', 'cached_file',
+               'metadata')
+      else: # add form
+         self.form.fields = ['file_url']
+         self.readonly_fields = []
+         # don't hide save buttons on add form
+         self.form.Media = None
+      return super(DataFileAdmin, self).get_form(request, obj, **kwargs)
 
 admin.site.register(Computation, ComputationAdmin)
 admin.site.register(DataFile, DataFileAdmin)
