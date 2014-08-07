@@ -21,7 +21,6 @@ class ZooAdapterConfig(SingletonModel):
          return 'http://' + address
       return address
 
-
    def __unicode__(self):
       return u"Zoo Adapter Configuration"
 
@@ -37,7 +36,7 @@ class ZooAdapter():
       url -- datafile remote url
       """
 
-      filehandle = urllib.urlopen(ZooAdapter.confic.get_zoo_server_address() +
+      filehandle = urllib.urlopen(ZooAdapter.config.get_zoo_server_address() +
             '/samples/sample_3D-Metadata.txt')
 
       data = filehandle.read()
