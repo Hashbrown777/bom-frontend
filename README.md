@@ -31,5 +31,5 @@ Example:
 
 **Third-party apps used**
 
-django-jsonfield (https://github.com/bradjasper/django-jsonfield)
-django-solo (https://github.com/lazybird/django-solo)
+- django-jsonfield (https://github.com/bradjasper/django-jsonfield)
+- django-solo (https://github.com/lazybird/django-solo)
