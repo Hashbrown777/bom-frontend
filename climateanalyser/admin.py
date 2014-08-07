@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django import forms
 from django.forms import ModelForm
 from climateanalyser.models import *
 from forms import *
