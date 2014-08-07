@@ -17,8 +17,7 @@ class DataFile(models.Model):
 
       #file name is md5 string of url
       self.cached_file = hashlib.md5(self.file_url).hexdigest()
-      urllib.urlretrieve(self.file_url, 
-            settings.CACHE_DIR + self.cached_file)
+      urllib.urlretrieve(self.file_url, settings.CACHE_DIR + self.cached_file)
 
       self.metadata = ZooAdapter.get_datafile_metadata(self.file_url)
 
