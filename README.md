@@ -28,3 +28,8 @@ Common issue: http://stackoverflow.com/a/5450183
 Example:
 
 `python manage.py runserver 130.56.248.104:8000`
+
+**Third-party apps used**
+
+- django-jsonfield (https://github.com/bradjasper/django-jsonfield)
+- django-solo (https://github.com/lazybird/django-solo)
