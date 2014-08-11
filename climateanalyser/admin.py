@@ -5,8 +5,6 @@ from forms import *
 from solo.admin import SingletonModelAdmin
 from climateanalyser.models import ClimateAnalyserConfig
 
-
-
 class ComputationDataInline(admin.StackedInline):
    model = ComputationData
    form = ComputationDataForm

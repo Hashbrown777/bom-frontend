@@ -12,6 +12,8 @@ class ZooAdapterConfig(SingletonModel):
 
    zoo_server_address = models.CharField(max_length=255)
    thredds_server_address = models.CharField(max_length=255)
+   zoo_public_key = models.CharField(max_length=1000)
+   zoo_private_key = models.CharField(max_length=1000)
 
    def get_zoo_server_address(self):
       """ Return zoo server address ready for use."""
@@ -27,6 +29,10 @@ class ZooAdapterConfig(SingletonModel):
 class ZooAdapter():
 
    config = ZooAdapterConfig.objects.get()
+
+   @staticmethod
+   def update_thredds_address(address):
+      print 'placeholder'
 
    @staticmethod
    def get_datafile_metadata(url):
