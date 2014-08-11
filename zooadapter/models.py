@@ -2,24 +2,24 @@ from django.db import models
 import HTMLParser, re
 from solo.models import SingletonModel
 import urllib
+from common.models import Common
 
 class ZooAdapterConfig(SingletonModel):
+   
+   class Meta:
+      verbose_name_plural = "ZooAdapter Config"
+      verbose_name = "ZooAdapter Config"
+
    zoo_server_address = models.CharField(max_length=255)
    thredds_server_address = models.CharField(max_length=255)
 
    def get_zoo_server_address(self):
       """ Return zoo server address ready for use."""
-      return self._prepare_address(self.zoo_server_address)
+      return Common.prepare_config_address(self.zoo_server_address)
 
    def get_thredds_server_address(self):
       """ Return thredds server address ready for use."""
-      return self._prepare_address(self.thredds_server_address)
-
-   def _prepare_address(self, address):
-      """ Return address ready for use."""
-      if address[:3] is not 'http':
-         return 'http://' + address
-      return address
+      return Common.prepare_config_address(self.thredds_server_address)
 
    def __unicode__(self):
       return u"Zoo Adapter Configuration"

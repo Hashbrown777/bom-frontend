@@ -5,6 +5,19 @@ from django.contrib.auth.models import User
 import hashlib, urllib 
 from jsonfield import JSONField
 from zooadapter.models import ZooAdapter
+from solo.models import SingletonModel
+from common.models import Common
+
+class ClimateAnalyserConfig(SingletonModel):
+
+   class Meta:
+      verbose_name_plural = "ClimateAnalyser Config"
+      verbose_name = "ClimateAnalyser Config"
+
+   tilemill_server_address = models.CharField(max_length=255)
+
+   def get_tilemill_server_address(self):
+      return Common.prepare_config_address(self.tilemill_server_address)
 
 class DataFile(models.Model):
    file_url = models.CharField(max_length=1000,unique=True)
