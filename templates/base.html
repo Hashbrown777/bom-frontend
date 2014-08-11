@@ -37,12 +37,14 @@
              </div>
                 <!-- menu goes here -->
                 <ul class="menu">
-                    <li>
-                        <a href="/datafiles" class="button">Data Files</a>
-                    </li>
-                    <li>
-                        <a href="/computations" class="button">Computations</a>
-                    </li>
+                    {% if user.is_authenticated %}
+                       <li>
+                           <a href="/datafiles" class="button">Data Files</a>
+                       </li>
+                       <li>
+                           <a href="/computations" class="button">Computations</a>
+                       </li>
+                    {% endif %}
                     <li>
                         {% if user.is_authenticated %}
                            <a href="/logout" class="button">Logout</a>
@@ -50,9 +52,6 @@
                            <a href="/login" class="button">Login</a>
                         {% endif %}
 
-                    </li>
-                    <li>
-                        <a href="#" class="button">Test</a>
                     </li>
                 </ul>
              <div class="clearfix"></div>
