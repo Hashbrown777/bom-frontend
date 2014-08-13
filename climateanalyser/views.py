@@ -11,17 +11,19 @@ from django.http import StreamingHttpResponse
 from django.conf import settings
 
 def index(request):
-   #Default page
+   """Default app page. It's just blank. """
    t = loader.get_template('index.html')
    context = RequestContext(request, {})
    html = t.render(context)
    return HttpResponse(html)
 
 def datafiles(request): 
+   """View list of DataFiles in the system."""
    return render(request, 'datafiles.html', { 'datafiles' : 
          DataFile.objects.filter() })
 
 def create_datafile(request):
+   """View to create a new DataFile."""
 
    if (request.user.is_authenticated() == False):
       messages.error(request, 'You must login to view that page.')
@@ -44,7 +46,7 @@ def create_datafile(request):
    return render(request, 'create_datafile.html', { 'form' : form })
 
 def create_computation(request, computation_pk=None): 
-   #Form for creating new computation
+   """View to create a new Computation"""
 
    if computation_pk:
       computation = Computation.objects.get(pk=computation_pk)
@@ -73,7 +75,8 @@ def create_computation(request, computation_pk=None):
          { 'form' : form, 'formset' : formset, })
 
 def computation(request):
-   #display single computation
+   """View a single Computation."""
+
    computation = Computation.objects.get(id=request.GET.get('id'))
    config = ClimateAnalyserConfig.objects.get()
    tilemill_server_address = config.get_tilemill_server_address()
@@ -82,7 +85,7 @@ def computation(request):
          'tilemill_server_address' : tilemill_server_address })
 
 def computations(request):
-   #View list of computations in the system
+   """View list of Computations in the system."""
 
    template_params = {}
 
@@ -99,10 +102,12 @@ def computations(request):
    return render(request, 'computations.html', template_params)
 
 def load_cache(request):
+   """To be used by AJAX requests to load a cached copy of a DataFile."""
 
    file = request.GET.get('file')
 
    if file:
+      # print contents of file directly to the screen
       full_path = settings.CACHE_DIR + file
       response = StreamingHttpResponse(open(full_path))
       return response
