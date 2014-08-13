@@ -2,6 +2,7 @@ from django.db import models
 import HTMLParser, re
 from solo.models import SingletonModel
 import urllib
+import rsa
 from common.models import Common
 
 class ZooAdapterConfig(SingletonModel):
@@ -32,7 +33,23 @@ class ZooAdapter():
 
    @staticmethod
    def update_thredds_address(address):
-      print 'placeholder'
+      """Update address of the THREDDS server used by Zoo.
+         
+      Keyword arguments:
+      address -- new THREDDS server address
+      """
+
+      pubkey = rsa.PublicKey.load_pkcs1(ZooAdapter.config.zoo_public_key)
+
+      encrypted_address = rsa.encrypt(quote_plus(address))
+
+      host_url = (ZooAdapter.config.get_zoo_server_address() + 
+            '/cgi-bin/operators/zoo_loader.cgi?request=Execute'
+            '&service=WPS&version=1.0.0.0&identifier=ChangeThredds'
+            '&DataInputs=url=' + encrypted_address)
+
+      result = urllib.urlopen(host_url)
+
 
    @staticmethod
    def get_datafile_metadata(url):
