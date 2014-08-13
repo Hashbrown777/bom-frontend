@@ -25,6 +25,7 @@ def datafiles(request):
 def create_datafile(request):
    """View to create a new DataFile."""
 
+   # deny guest access
    if (request.user.is_authenticated() == False):
       messages.error(request, 'You must login to view that page.')
       return HttpResponseRedirect('/login')
@@ -48,7 +49,13 @@ def create_datafile(request):
 def create_computation(request, computation_pk=None): 
    """View to create a new Computation"""
 
+   # deny guest access
+   if (request.user.is_authenticated() == False):
+      messages.error(request, 'You must login to view that page.')
+      return HttpResponseRedirect('/login')
+
    if computation_pk:
+      # if we need to restore user submitted data to screen
       computation = Computation.objects.get(pk=computation_pk)
    else:
       computation = Computation()
@@ -63,6 +70,7 @@ def create_computation(request, computation_pk=None):
       if form.is_valid() and formset.is_valid():
          form.save()
          formset.save()
+         # redirect on success
          messages.success(request, 'Computation successfully created!')
          return HttpResponseRedirect('/computations')
 
