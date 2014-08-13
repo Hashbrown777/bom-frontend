@@ -9,6 +9,7 @@ from models import *
 from django.contrib import messages
 from django.http import StreamingHttpResponse
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 
 def index(request):
    """Default app page. It's just blank. """
@@ -22,13 +23,9 @@ def datafiles(request):
    return render(request, 'datafiles.html', { 'datafiles' : 
          DataFile.objects.filter() })
 
+@login_required
 def create_datafile(request):
    """View to create a new DataFile."""
-
-   # deny guest access
-   if (request.user.is_authenticated() == False):
-      messages.error(request, 'You must login to view that page.')
-      return HttpResponseRedirect('/login')
 
    if request.method == 'POST':
 
@@ -46,13 +43,9 @@ def create_datafile(request):
 
    return render(request, 'create_datafile.html', { 'form' : form })
 
+@login_required
 def create_computation(request, computation_pk=None): 
    """View to create a new Computation"""
-
-   # deny guest access
-   if (request.user.is_authenticated() == False):
-      messages.error(request, 'You must login to view that page.')
-      return HttpResponseRedirect('/login')
 
    if computation_pk:
       # if we need to restore user submitted data to screen
