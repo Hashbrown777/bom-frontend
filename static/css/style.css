@@ -46,6 +46,10 @@
    padding: 0 0 0 6px;
 }
 
+.wrapper p.error{
+   color:red;
+}
+
 #id_username, #id_password{
    height:20px;
 }
