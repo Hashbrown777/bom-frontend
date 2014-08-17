@@ -3,6 +3,11 @@ import HTMLParser, re
 from solo.models import SingletonModel
 import urllib
 from common.models import Common
+from pydap.responses.lib import BaseResponse
+from pydap.lib import walk
+from pydap.client import open_url
+import json
+import sys
 
 class ZooAdapterConfig(SingletonModel):
    
@@ -36,12 +41,52 @@ class ZooAdapter():
       url -- datafile remote url
       """
 
-      filehandle = urllib.urlopen(ZooAdapter.config.get_zoo_server_address() +
-            '/samples/sample_3D-Metadata.txt')
+      dataset = open_url(url)
+      attributes = {}
+      hasTime = {}
+      hasLat = {}
+      hasLon = {}
+      isVar = {}
 
-      data = filehandle.read()
-      filehandle.close()
-      return data
+      for child in walk(dataset):
+          parts = child.id.split('.')
+          if len(parts) == 1:
+              isVar[child.id] = True
+          else:
+              last = parts.pop()
+              first = ".".join(parts)
+              print >>sys.stderr, "First: " + first
+              print >>sys.stderr, "Last: " + last
+              if last == "time":
+                  hasTime[first] = True
+              elif last == "lat":
+                  hasLat[first] = True
+              elif last == "lon":
+                  hasLon[first] = True 
+
+      for child in walk(dataset):
+          item = {}
+          id = child.id
+          if child.attributes.has_key('long_name'):
+              item['name'] = child.attributes['long_name']
+          else:
+              item['name'] = id
+
+          if hasLat.has_key(id) and hasLon.has_key(id) and hasTime.has_key(id) and isVar.has_key(id):
+              item['dimensions'] = 3
+          elif hasTime.has_key(id) and isVar.has_key(id):
+              item['dimensions'] = 1
+          elif isVar.has_key(id):
+              del isVar[id]
+
+          if isVar.has_key(id):
+              attributes[id] = item
+
+      if hasattr(dataset, 'close'):
+          dataset.close()
+
+      out = json.dumps(attributes)
+      return out
 
    @staticmethod
    def get_descriptor_file(computationdata_list, calculation):
@@ -64,7 +109,7 @@ class ZooAdapter():
 
       descriptor_file = (ZooAdapter.config.get_zoo_server_address() +
             '/cgi-bin/zoo_loader.cgi?request=Execute&service=WPS'
-            '&version=1.0.0.0&identifier='
+		    '&version=1.0.0.0&identifier='
             'Operation&DataInputs=selection=' + calculation + ';urls=')
 
       #append all data files

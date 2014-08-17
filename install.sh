@@ -50,3 +50,4 @@ FIN
 
 cd $OLDDIR
 cp dev/sample_settings.py bom/settings.py
+$RUNASUSER mkdir cache
