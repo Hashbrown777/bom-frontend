@@ -42,6 +42,7 @@ createdb --encoding=UNICODE bom -O bom
 FIN
 
 cp $OLDDIR/dump.sql /usr/local/pgsql/dump.sql
+rm $OLDDIR/dump.sql
 chown postgres:postgres /usr/local/pgsql/dump.sql
 
 $RUNASPOSTGRES bash <<FIN
