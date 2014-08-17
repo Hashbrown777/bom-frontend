@@ -8,7 +8,6 @@ from zooadapter.models import ZooAdapter
 from solo.models import SingletonModel
 from common.models import Common
 import json
-import sys
 
 class ClimateAnalyserConfig(SingletonModel):
 
@@ -39,11 +38,7 @@ class DataFile(models.Model):
       self.last_modified = datetime.now()
 
    def get_variables(self):
-      #omit first item as it is datafile
-      
-      print >>sys.stderr, "Metadata: " + self.metadata
-      print >>sys.stderr, "Keys: [" + ",".join(json.loads(self.metadata).keys()) + "]"
-      return json.loads(self.metadata).keys()
+      return json.loads(self.metadata)
 
    def __unicode__(self):
       return self.file_url

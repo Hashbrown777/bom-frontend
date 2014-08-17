@@ -7,7 +7,6 @@ from pydap.responses.lib import BaseResponse
 from pydap.lib import walk
 from pydap.client import open_url
 import json
-import sys
 
 class ZooAdapterConfig(SingletonModel):
    
@@ -43,44 +42,29 @@ class ZooAdapter():
 
       dataset = open_url(url)
       attributes = {}
-      hasTime = {}
-      hasLat = {}
-      hasLon = {}
-      isVar = {}
-
       for child in walk(dataset):
           parts = child.id.split('.')
-          if len(parts) == 1:
-              isVar[child.id] = True
-          else:
-              last = parts.pop()
-              first = ".".join(parts)
-              print >>sys.stderr, "First: " + first
-              print >>sys.stderr, "Last: " + last
-              if last == "time":
-                  hasTime[first] = True
-              elif last == "lat":
-                  hasLat[first] = True
-              elif last == "lon":
-                  hasLon[first] = True 
+          if hasattr(child, "dimensions") and len(parts) == 1:
+              isVar = False
+              item = {}
+              if len(child.dimensions) == 1:
+                  if child.dimensions[0] != child.id and child.dimensions[0] == 'time':
+                      isVar = True
+                      item['dimensions'] = 1
+              elif len(child.dimensions) == 3:
+                  if 'lat' in child.dimensions and 'lon' in child.dimensions and 'time' in child.dimensions:
+                      isVar = True
+                      item['dimensions'] = 3
+              
+              if isVar:
+                  # Generates a name for the variable. Uses its long name if
+                  # possible, otherwise uses the id.
+                  if child.attributes.has_key('long_name') and child.attributes['long_name'] != "":
+                      item['name'] = child.attributes['long_name']
+                  else:
+                      item['name'] = child.id
 
-      for child in walk(dataset):
-          item = {}
-          id = child.id
-          if child.attributes.has_key('long_name'):
-              item['name'] = child.attributes['long_name']
-          else:
-              item['name'] = id
-
-          if hasLat.has_key(id) and hasLon.has_key(id) and hasTime.has_key(id) and isVar.has_key(id):
-              item['dimensions'] = 3
-          elif hasTime.has_key(id) and isVar.has_key(id):
-              item['dimensions'] = 1
-          elif isVar.has_key(id):
-              del isVar[id]
-
-          if isVar.has_key(id):
-              attributes[id] = item
+                  attributes[child.id] = item
 
       if hasattr(dataset, 'close'):
           dataset.close()
