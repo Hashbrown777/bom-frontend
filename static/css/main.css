@@ -4,7 +4,7 @@
 
 body {
    height:100%;
-   background-color:white;
+   background-color:#f0eeeb;
 }
 
 .button {
@@ -109,7 +109,7 @@ tbody tr:hover {
    border:1px solid white;
    background-color:white;
    min-height:400px;
-   margin:20px 0px 60px 0px;
+   padding:20px 0px 60px 0px;
 }
 
 .info_container .key,
