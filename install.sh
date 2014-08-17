@@ -12,10 +12,7 @@ yum -y install python-devel python-pip python-virtualenv postgresql postgresql-d
 
 virtualenv env
 source ./env/bin/activate
-pip install django
-pip install jsonfield
-pip install django-solo
-pip install psycopg2
+cat dev/requirements.txt | xargs -L1 pip install
 deactivate
 
 $RUNASUSER bash <<FIN
@@ -45,6 +42,7 @@ createdb --encoding=UNICODE bom -O bom
 FIN
 
 cp $OLDDIR/dump.sql /usr/local/pgsql/dump.sql
+rm $OLDDIR/dump.sql
 chown postgres:postgres /usr/local/pgsql/dump.sql
 
 $RUNASPOSTGRES bash <<FIN
@@ -53,3 +51,4 @@ FIN
 
 cd $OLDDIR
 cp dev/sample_settings.py bom/settings.py
+$RUNASUSER mkdir cache

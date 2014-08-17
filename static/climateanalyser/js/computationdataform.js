@@ -32,11 +32,11 @@
                csrfmiddlewaretoken : $.cookie("csrftoken")
             }
          }).done(function(response){
-
             //load variables into multi-selectbox
-            for (i = 0; i < response.length; i++) {
-               $variablesSelect.append("<option value='" + response[i] + "'>" 
-                  + response[i] + "</option>");
+            for (key in response) {
+               $variablesSelect.append("<option value='" + key + "'>" 
+                  + response[key].name + " (" + response[key].dimensions
+                  + "D)</option>");
             }
          });
       };

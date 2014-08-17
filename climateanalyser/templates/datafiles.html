@@ -29,6 +29,11 @@
          <td><a href="/load_cache?file={{ datafile.cached_file }}">Download</a>
          </td>
       </tr>
+   {% empty %}
+      <tr><td colspan=4>
+        <em>There are no datafiles in the database. Why don't you 
+            <a href="/create_datafile">add one</a>?</em>
+      </td></tr>
    {% endfor %}
    </tbody>
 </table>
