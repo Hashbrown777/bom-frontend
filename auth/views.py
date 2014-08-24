@@ -56,3 +56,19 @@ def profile(request):
    html = t.render(context)
    return HttpResponse(html)
 
+def update_profile(request):
+   args = {}
+
+   if request.method == 'POST':
+      form = UpdateProfile(request.POST)
+      form.actual_user = request.user
+      if form.is_valid():
+         form.save()
+         return HttpResponseRedirect(reverse('update_profile_success'))
+   else:
+      form = UpdateProfile()
+
+   t = loader.get_template('update_profile.html')
+   context = RequestContext(request, {'form':form})
+   html = t.render(context)
+   return HttpResponse(html)

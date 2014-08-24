@@ -18,5 +18,6 @@ urlpatterns = [
     {'post_reset_redirect' : '/user/password/done/'}),
    url(r'^user/password/done/$', 
     'django.contrib.auth.views.password_reset_complete'),
-   url(r'^profile/', views.profile, name='profile'),
+   url(r'^profile/$', views.profile, name='profile'),
+   url(r'^profile/edit', views.update_profile, name='update_profile'),
    ]
