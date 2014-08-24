@@ -2,24 +2,28 @@ from django.db import models
 import HTMLParser, re
 from solo.models import SingletonModel
 import urllib
+from common.models import Common
+from pydap.responses.lib import BaseResponse
+from pydap.lib import walk
+from pydap.client import open_url
+import json
 
 class ZooAdapterConfig(SingletonModel):
+   
+   class Meta:
+      verbose_name_plural = "ZooAdapter Config"
+      verbose_name = "ZooAdapter Config"
+
    zoo_server_address = models.CharField(max_length=255)
    thredds_server_address = models.CharField(max_length=255)
 
    def get_zoo_server_address(self):
       """ Return zoo server address ready for use."""
-      return self._prepare_address(self.zoo_server_address)
+      return Common.prepare_config_address(self.zoo_server_address)
 
    def get_thredds_server_address(self):
       """ Return thredds server address ready for use."""
-      return self._prepare_address(self.thredds_server_address)
-
-   def _prepare_address(self, address):
-      """ Return address ready for use."""
-      if address[:3] is not 'http':
-         return 'http://' + address
-      return address
+      return Common.prepare_config_address(self.thredds_server_address)
 
    def __unicode__(self):
       return u"Zoo Adapter Configuration"
@@ -36,12 +40,37 @@ class ZooAdapter():
       url -- datafile remote url
       """
 
-      filehandle = urllib.urlopen(ZooAdapter.config.get_zoo_server_address() +
-            '/samples/sample_3D-Metadata.txt')
+      dataset = open_url(url)
+      attributes = {}
+      for child in walk(dataset):
+          parts = child.id.split('.')
+          if hasattr(child, "dimensions") and len(parts) == 1:
+              isVar = False
+              item = {}
+              if len(child.dimensions) == 1:
+                  if child.dimensions[0] != child.id and child.dimensions[0] == 'time':
+                      isVar = True
+                      item['dimensions'] = 1
+              elif len(child.dimensions) == 3:
+                  if 'lat' in child.dimensions and 'lon' in child.dimensions and 'time' in child.dimensions:
+                      isVar = True
+                      item['dimensions'] = 3
+              
+              if isVar:
+                  # Generates a name for the variable. Uses its long name if
+                  # possible, otherwise uses the id.
+                  if child.attributes.has_key('long_name') and child.attributes['long_name'] != "":
+                      item['name'] = child.attributes['long_name']
+                  else:
+                      item['name'] = child.id
 
-      data = filehandle.read()
-      filehandle.close()
-      return data
+                  attributes[child.id] = item
+
+      if hasattr(dataset, 'close'):
+          dataset.close()
+
+      out = json.dumps(attributes)
+      return out
 
    @staticmethod
    def get_descriptor_file(computationdata_list, calculation):
@@ -64,7 +93,7 @@ class ZooAdapter():
 
       descriptor_file = (ZooAdapter.config.get_zoo_server_address() +
             '/cgi-bin/zoo_loader.cgi?request=Execute&service=WPS'
-            '&version=1.0.0.0&identifier='
+		    '&version=1.0.0.0&identifier='
             'Operation&DataInputs=selection=' + calculation + ';urls=')
 
       #append all data files

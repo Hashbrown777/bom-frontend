@@ -65,7 +65,8 @@ def create_computation(request, computation_pk=None):
          return HttpResponseRedirect('/computations')
 
    else:
-      form = ComputationForm(initial={ 'created_by': request.user },instance=computation)
+      form = ComputationForm(initial={ 'created_by': request.user },
+            instance=computation)
       formset = ComputationFormSet(instance=computation)
 
    return render(request, 'create_computation.html', 
@@ -74,8 +75,11 @@ def create_computation(request, computation_pk=None):
 def computation(request):
    #display single computation
    computation = Computation.objects.get(id=request.GET.get('id'))
+   config = ClimateAnalyserConfig.objects.get()
+   tilemill_server_address = config.get_tilemill_server_address()
 
-   return render(request, 'computation.html', {'computation': computation})
+   return render(request, 'computation.html', {'computation': computation,
+         'tilemill_server_address' : tilemill_server_address })
 
 def computations(request):
    #View list of computations in the system

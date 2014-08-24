@@ -2,6 +2,10 @@ from django.contrib import admin
 from django.forms import ModelForm
 from climateanalyser.models import *
 from forms import *
+from solo.admin import SingletonModelAdmin
+from climateanalyser.models import ClimateAnalyserConfig
+
+
 
 class ComputationDataInline(admin.StackedInline):
    model = ComputationData
@@ -46,3 +50,4 @@ class DataFileAdmin(admin.ModelAdmin):
 
 admin.site.register(Computation, ComputationAdmin)
 admin.site.register(DataFile, DataFileAdmin)
+admin.site.register(ClimateAnalyserConfig, SingletonModelAdmin)

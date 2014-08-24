@@ -19,7 +19,7 @@
             attribution: "Climate Analysis data"
             }).addTo(map);
 
-   L.tileLayer('http://118.138.241.181/v2/CountryOutlines/{z}/{x}/{y}.png',{
+   L.tileLayer(tilemillServerAddress + '/v2/CountryOutlines/{z}/{x}/{y}.png',{
             maxZoom: 8,
             detectRetina: true
             }).addTo(map);
