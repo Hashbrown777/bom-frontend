@@ -54,7 +54,7 @@ def create_computation(request, computation_pk=None):
       computation = Computation()
    
    ComputationFormSet = inlineformset_factory(Computation, ComputationData,
-         form=ComputationDataForm,extra=2)
+         form=ComputationDataForm,extra=1)
   
    if request.method == 'POST':
       form = ComputationForm(request.POST,instance=computation)
