@@ -13,8 +13,8 @@ class ClimateAnalyserConfig(SingletonModel):
    """Configuration options for the app, to be modified in the backend."""
 
    class Meta:
-      verbose_name_plural = "ClimateAnalyser Config"
-      verbose_name = "ClimateAnalyser Config"
+      verbose_name_plural = "Config"
+      verbose_name = "Config"
 
    tilemill_server_address = models.CharField(max_length=255)
 
