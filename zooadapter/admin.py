@@ -1,7 +1,13 @@
 from django.contrib import admin
 from django import forms
+from django.template.loader import get_template
+from django.shortcuts import render
+from django.template import RequestContext,loader
+from django.http import HttpResponse
+from django.http import HttpResponse
 from solo.admin import SingletonModelAdmin
-from zooadapter.models import ZooAdapterConfig
+from zooadapter.models import ZooAdapterConfig,ZooDashboard
+from django.conf.urls import patterns
 
 class AdminZooAdapterConfigForm(forms.ModelForm):
 
@@ -16,3 +22,5 @@ class ZooAdapterConfigAdmin(SingletonModelAdmin):
 
 admin.site.register(ZooAdapterConfig, ZooAdapterConfigAdmin)
 
+# ZooDashboard is an empty model used just so Django creates a link
+admin.site.register(ZooDashboard, SingletonModelAdmin)

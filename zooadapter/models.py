@@ -9,11 +9,19 @@ from pydap.lib import walk
 from pydap.client import open_url
 import json
 
+class ZooDashboard(SingletonModel):
+   """ Empty model used purely to generate a link on the admin frontend """
+
+   class Meta:
+      verbose_name_plural = "Dashboard"
+      verbose_name = "Dashboard"
+
+
 class ZooAdapterConfig(SingletonModel):
    
    class Meta:
-      verbose_name_plural = "ZooAdapter Config"
-      verbose_name = "ZooAdapter Config"
+      verbose_name_plural = "Config"
+      verbose_name = "Config"
 
    zoo_server_address = models.CharField(max_length=255)
    thredds_server_address = models.CharField(max_length=255)
