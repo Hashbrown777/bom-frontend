@@ -150,6 +150,9 @@ class ZooAdapter():
       descriptor_file = ZooAdapter.get_descriptor_file(computationdata_list, 
             calculation)
 
+      if not descriptor_file:
+         return
+
       result_url = ''
       filehandle = urllib.urlopen(descriptor_file)
 
