@@ -1,12 +1,15 @@
 from django.http import HttpResponse
-from models import DataFile
+from models import DataFile,Computation
 import json
 
 def load_datafile_metadata(request):
 
-   datafile = DataFile.objects.get(id=request.POST.get('id'))
+   response = 'failure'
 
-   response = ''
+   try:
+      datafile = DataFile.objects.get(id=request.POST.get('id'))
+   except DataFile.DoesNotExist:
+      return HttpResponse(response)
 
    if datafile:
       variables = datafile.get_variables()
@@ -16,11 +19,13 @@ def load_datafile_metadata(request):
  
 def update_computation_status(request):
 
-   computation = Computation.objects.get(id=request.POST.get('id'))
+   response = 'failure' # whether or not we failed to update status
    status = request.POST.get('status')
 
-   # whether or not we failed to update status
-   response = 'failure'
+   try:
+      computation = Computation.objects.get(id=request.POST.get('id'))
+   except Computation.DoesNotExist:
+      return HttpResponse(response)
 
    if computation:
       computation.status = status
@@ -28,4 +33,3 @@ def update_computation_status(request):
       response = 'success'
 
    return HttpResponse(response)
-      
