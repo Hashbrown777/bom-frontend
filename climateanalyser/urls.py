@@ -11,4 +11,5 @@ urlpatterns = [
    url(r'^computation$', views.computation, name='computation'),
    url(r'^load_cache$', views.load_cache, name='load_cache'),
    url(r'^load_datafile_metadata$', ajax.load_datafile_metadata, name='load_datafile_metadata'),
+   url(r'^update_computation_status$', ajax.update_computation_status, name='update_computation_status'),
 ]
