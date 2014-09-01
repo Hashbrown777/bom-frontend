@@ -51,18 +51,26 @@ class DataFile(models.Model):
 class Computation(models.Model):
    """The operation performed on data files, such as correlate or regress."""
 
-   created_by = models.ForeignKey(User)
-   created_date = models.DateTimeField('date created')
-   completed_date = models.DateTimeField('date completed',null=True,
-         blank=True)
-
-   CALCULATION_CHOICES = (
+   CALC_CHOICES = (
          ('correlate', 'Correlate'),
          ('regress', 'Regress'),
    )
 
-   calculation = models.CharField(max_length=100,
-         choices=CALCULATION_CHOICES, default='correlate')
+   STATUS_CHOICES = (
+         ('scheduled', 'Scheduled'),
+         ('running', 'Running'),
+         ('successful', 'Successful'),
+         ('failed', 'Failed'),
+   )
+
+   created_by = models.ForeignKey(User)
+   created_date = models.DateTimeField('date created')
+   completed_date = models.DateTimeField('date completed',null=True,
+         blank=True)
+   status = models.CharField(max_length=100,choices=STATUS_CHOICES,
+         default='scheduled')
+   calculation = models.CharField(max_length=100,choices=CALC_CHOICES,
+         default='correlate')
 
    def result_wms(self):
       #Get the URL of the result from Zoo in WMS format
