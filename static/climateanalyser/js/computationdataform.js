@@ -81,22 +81,22 @@
          $(".datafile_formset").append(newFormset);
       };
 
-      $form.on("change", "select[id$=datafile]", function() {
-         event.preventDefault();
+      $form.on("change", "select[id$=datafile]", function(e) {
+         e.preventDefault();
          populateVariables(this);
       });
 
-      $form.find("select[id$=datafile]").each(function() {
+      $form.find("select[id$=datafile]").each(function(e) {
          populateVariables(this);
       });
 
-      $form.find("#add_datafile").click(function(){
-         event.preventDefault();
+      $form.find("#add_datafile").click(function(e){
+         e.preventDefault();
          addDataFile();
       });
 
-      $form.on("click", ".remove_button", function() {
-         event.preventDefault();
+      $form.on("click", ".remove_button", function(e) {
+         e.preventDefault();
          $(this).parent().remove();
          incrementFormsetCount(-1);
       });
