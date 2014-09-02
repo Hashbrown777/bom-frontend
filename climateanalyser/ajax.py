@@ -32,17 +32,18 @@ def update_computation_status(request):
    if not encrypted_status or not encrypted_comp_id:
       return HttpResponse(response)
 
-   # prepare strings for decryption 
-   encrypted_status = urllib.unquote(base64.b64decode(encrypted_status))
-   encrypted_comp_id = urllib.unquote(base64.b64decode(encrypted_comp_id))
-
-   # decrypt!
-   status = rsa.decrypt(encrypted_status, private_key)
-   computation_id = rsa.decrypt(encrypted_comp_id, private_key)
-
    try:
+      # prepare strings for decryption 
+      encrypted_status = urllib.unquote(base64.b64decode(encrypted_status))
+      encrypted_comp_id = urllib.unquote(base64.b64decode(encrypted_comp_id))
+
+      # decrypt!
+      status = rsa.decrypt(encrypted_status, private_key)
+      computation_id = rsa.decrypt(encrypted_comp_id, private_key)
+
       computation = Computation.objects.get(id=request.POST.get('id'))
-   except Computation.DoesNotExist:
+
+   except Exception: 
       return HttpResponse(response)
 
    if computation:
