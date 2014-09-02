@@ -27,7 +27,7 @@
          $.ajax({
             method : "POST",
             dataType : "json",
-            url : "/load_datafile_metadata",
+            url : "/load_datafile_variables",
             data : { 
                id : $(datafileSelect).val(),
                csrfmiddlewaretoken : $.cookie("csrftoken")

@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from models import DataFile,Computation
 from zooadapter.models import ZooAdapter
 
-def load_datafile_metadata(request):
+def load_datafile_variables(request):
 
    response = 'failure'
 
