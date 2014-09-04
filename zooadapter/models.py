@@ -2,20 +2,31 @@ from django.db import models
 import HTMLParser, re
 from solo.models import SingletonModel
 import urllib
+import rsa
 from common.models import Common
 from pydap.responses.lib import BaseResponse
 from pydap.lib import walk
 from pydap.client import open_url
 import json
 
+class ZooDashboard(SingletonModel):
+   """ Empty model used purely to generate a link on the admin frontend """
+
+   class Meta:
+      verbose_name_plural = "Dashboard"
+      verbose_name = "Dashboard"
+
+
 class ZooAdapterConfig(SingletonModel):
    
    class Meta:
-      verbose_name_plural = "ZooAdapter Config"
-      verbose_name = "ZooAdapter Config"
+      verbose_name_plural = "Config"
+      verbose_name = "Config"
 
    zoo_server_address = models.CharField(max_length=255)
    thredds_server_address = models.CharField(max_length=255)
+   zoo_public_key = models.CharField(max_length=1000)
+   zoo_private_key = models.CharField(max_length=1000)
 
    def get_zoo_server_address(self):
       """ Return zoo server address ready for use."""
@@ -31,6 +42,26 @@ class ZooAdapterConfig(SingletonModel):
 class ZooAdapter():
 
    config = ZooAdapterConfig.objects.get()
+
+   @staticmethod
+   def update_thredds_address(address):
+      """Update address of the THREDDS server used by Zoo.
+         
+      Keyword arguments:
+      address -- new THREDDS server address
+      """
+
+      pubkey = rsa.PublicKey.load_pkcs1(ZooAdapter.config.zoo_public_key)
+
+      encrypted_address = rsa.encrypt(quote_plus(address))
+
+      host_url = (ZooAdapter.config.get_zoo_server_address() + 
+            '/cgi-bin/operators/zoo_loader.cgi?request=Execute'
+            '&service=WPS&version=1.0.0.0&identifier=ChangeThredds'
+            '&DataInputs=url=' + encrypted_address)
+
+      result = urllib.urlopen(host_url)
+
 
    @staticmethod
    def get_datafile_metadata(url):
@@ -118,6 +149,9 @@ class ZooAdapter():
       #file containing list of result links
       descriptor_file = ZooAdapter.get_descriptor_file(computationdata_list, 
             calculation)
+
+      if not descriptor_file:
+         return
 
       result_url = ''
       filehandle = urllib.urlopen(descriptor_file)

@@ -10,17 +10,22 @@ from common.models import Common
 import json
 
 class ClimateAnalyserConfig(SingletonModel):
+   """Configuration options for the app, to be modified in the backend."""
 
    class Meta:
-      verbose_name_plural = "ClimateAnalyser Config"
-      verbose_name = "ClimateAnalyser Config"
+      verbose_name_plural = "Config"
+      verbose_name = "Config"
 
    tilemill_server_address = models.CharField(max_length=255)
 
    def get_tilemill_server_address(self):
+      """ Return Tilemill server address ready for use. """
       return Common.prepare_config_address(self.tilemill_server_address)
 
 class DataFile(models.Model):
+   """A data file, which is cached on the local server."""
+
+   # original remote url of file 
    file_url = models.CharField(max_length=1000,unique=True)
    cached_file = models.CharField(max_length=1000)
    last_modified = models.DateTimeField('last modified')
@@ -44,6 +49,8 @@ class DataFile(models.Model):
       return self.file_url
 
 class Computation(models.Model):
+   """The operation performed on data files, such as correlate or regress."""
+
    created_by = models.ForeignKey(User)
    created_date = models.DateTimeField('date created')
    completed_date = models.DateTimeField('date completed',null=True,
@@ -79,6 +86,9 @@ class Computation(models.Model):
       return ComputationData.objects.filter(computation=self).order_by('id')
 
 class ComputationData(models.Model):
+   """Link between Computation and DataFiles. Specific variables for data file
+   can be selected.
+   """
    datafile = models.ForeignKey(DataFile)   
    computation = models.ForeignKey(Computation)
    variables = JSONField()
