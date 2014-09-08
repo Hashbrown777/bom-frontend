@@ -16,9 +16,9 @@ def index(request):
    context = RequestContext(request, {})
    html = t.render(context)
    return HttpResponse(html)
-   
+
 def register(request):
-      
+
    if request.method == 'POST':
       form = UserRegisterForm(request.POST)
       userName = request.REQUEST.get('username', None)
@@ -27,7 +27,8 @@ def register(request):
       userFirst = request.REQUEST.get('first_name', None)
       userLast = request.REQUEST.get('last_name', None)
       if form.is_valid():
-         user = User.objects.create_user(username=userName,email=userMail,password=userPass)
+         user = User.objects.create_user(username = userName, email = userMail,
+                                         password = userPass)
          user.last_name = userLast;
          user.first_name = userFirst;
          user.save();
@@ -55,4 +56,3 @@ def profile(request):
    context = RequestContext(request, { 'profile':profile })
    html = t.render(context)
    return HttpResponse(html)
-
