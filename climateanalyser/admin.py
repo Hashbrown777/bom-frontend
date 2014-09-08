@@ -35,9 +35,9 @@ class DataFileAdmin(admin.ModelAdmin):
       if obj: # edit form
          # make edit form a read-only 'profile' page
          self.form = AdminDataFileForm
-         self.form.fields = ['file_url', 'last_modified', 'cached_file', 'metadata']
+         self.form.fields = ['file_url', 'last_modified', 'cached_file', 'variables']
          self.readonly_fields = ('file_url', 'last_modified', 'cached_file',
-               'metadata')
+               'variables')
       else: # add form
          self.form = DataFileForm
          self.form.fields = ['file_url']

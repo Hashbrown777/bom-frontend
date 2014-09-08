@@ -29,7 +29,7 @@ class DataFile(models.Model):
    file_url = models.CharField(max_length=1000,unique=True)
    cached_file = models.CharField(max_length=1000)
    last_modified = models.DateTimeField('last modified')
-   metadata = JSONField()
+   variables = JSONField()
 
    def clean(self):
       #Create cached file and save data
@@ -38,12 +38,12 @@ class DataFile(models.Model):
       self.cached_file = hashlib.md5(self.file_url).hexdigest()
       urllib.urlretrieve(self.file_url, settings.CACHE_DIR + self.cached_file)
 
-      self.metadata = ZooAdapter.get_datafile_metadata(self.file_url)
+      self.variables = ZooAdapter.get_datafile_variables(self.file_url)
 
       self.last_modified = datetime.now()
 
    def get_variables(self):
-      return json.loads(self.metadata)
+      return json.loads(self.variables)
 
    def __unicode__(self):
       return self.file_url
@@ -51,18 +51,26 @@ class DataFile(models.Model):
 class Computation(models.Model):
    """The operation performed on data files, such as correlate or regress."""
 
-   created_by = models.ForeignKey(User)
-   created_date = models.DateTimeField('date created')
-   completed_date = models.DateTimeField('date completed',null=True,
-         blank=True)
-
-   CALCULATION_CHOICES = (
+   CALC_CHOICES = (
          ('correlate', 'Correlate'),
          ('regress', 'Regress'),
    )
 
-   calculation = models.CharField(max_length=100,
-         choices=CALCULATION_CHOICES, default='correlate')
+   STATUS_CHOICES = (
+         ('scheduled', 'Scheduled'),
+         ('running', 'Running'),
+         ('successful', 'Successful'),
+         ('failed', 'Failed'),
+   )
+
+   created_by = models.ForeignKey(User)
+   created_date = models.DateTimeField('date created')
+   completed_date = models.DateTimeField('date completed',null=True,
+         blank=True)
+   status = models.CharField(max_length=100,choices=STATUS_CHOICES,
+         default='scheduled')
+   calculation = models.CharField(max_length=100,choices=CALC_CHOICES,
+         default='correlate')
 
    def result_wms(self):
       #Get the URL of the result from Zoo in WMS format
