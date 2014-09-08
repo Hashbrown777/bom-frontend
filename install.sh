@@ -8,7 +8,8 @@ fi
 RUNASUSER="sudo -u $SUDO_USER"
 RUNASPOSTGRES="sudo -u postgres"
 
-yum -y install python-devel python-pip python-virtualenv postgresql postgresql-devel postgresql-server postgresql-plpython
+yum -y install python-devel python-pip python-virtualenv postgresql \
+               postgresql-devel postgresql-server postgresql-plpython
 
 virtualenv env
 source ./env/bin/activate

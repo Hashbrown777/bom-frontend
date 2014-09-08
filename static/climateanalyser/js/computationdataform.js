@@ -14,7 +14,7 @@
          // get multi-selectbox for variables
          var $variablesSelect = $("#" + $(datafileSelect).attr("id")
                .replace("datafile", "variables"));
-         
+
          // ignore "-----" option
          if (!$(datafileSelect).val()){
             $variablesSelect.html('');
@@ -35,7 +35,7 @@
          }).done(function(response){
             //load variables into multi-selectbox
             for (key in response) {
-               $variablesSelect.append("<option value='" + key + "'>" 
+               $variablesSelect.append("<option value='" + key + "'>"
                   + response[key].name + " (" + response[key].dimensions
                   + "D)</option>");
             }
@@ -66,9 +66,9 @@
 
          // clone formset with new set numbers
          var tmpFormset = $('<div></div>');
-         tmpFormset.html(formset.html().replace(/set-(\d)+/g, "set-" + (setNo + 1))); 
+         tmpFormset.html(formset.html().replace(/set-(\d)+/g, "set-" + (setNo + 1)));
 
-         // create new formset 
+         // create new formset
          var newFormset = $("<div class='datafile_formset_new'></div>");
          newFormset.append(tmpFormset.find("p"));
          // empty variable selectbox
@@ -100,11 +100,6 @@
          $(this).parent().remove();
          incrementFormsetCount(-1);
       });
-
-      
-
-
-
    });
 
 })(jQuery);
