@@ -17,7 +17,6 @@
 
 <h1>Computation #{{ computation.id }}</h1>
 
-
 <div class="info_container computation">
    <div class="item created_by">
       <span class="key"><strong>Created by</strong></span>
@@ -27,7 +26,10 @@
       <span class="key"><strong>Calculation</strong></span>
       <span class="value">{{ computation.calculation.capitalize }}</span>
    </div>
-
+   <div class="item status">
+      <span class="key"><strong>Status</strong></span>
+      <span class="value">{{ computation.status.capitalize }}</span>
+   </div>
    <div class="item created_date">
       <span class="key"><strong>Created date</strong></span>
       <span class="value">{{ computation.created_date }}</span>

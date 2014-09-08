@@ -1,13 +1,10 @@
+import HTMLParser,re,urllib,rsa,json
 from django.db import models
-import HTMLParser, re
 from solo.models import SingletonModel
-import urllib
-import rsa
 from common.models import Common
 from pydap.responses.lib import BaseResponse
 from pydap.lib import walk
 from pydap.client import open_url
-import json
 
 class ZooDashboard(SingletonModel):
    """ Empty model used purely to generate a link on the admin frontend """
@@ -27,6 +24,14 @@ class ZooAdapterConfig(SingletonModel):
    thredds_server_address = models.CharField(max_length=255)
    zoo_public_key = models.CharField(max_length=1000)
    zoo_private_key = models.CharField(max_length=1000)
+
+   def get_public_key(self):
+      """ Get ready-to-use PublicKey object."""
+      return rsa.PublicKey.load_pkcs1(ZooAdapter.config.zoo_public_key)
+
+   def get_private_key(self):
+      """ Get ready-to-use PrivateKey object."""
+      return rsa.PrivateKey.load_pkcs1(ZooAdapter.config.zoo_private_key)
 
    def get_zoo_server_address(self):
       """ Return zoo server address ready for use."""
@@ -51,9 +56,9 @@ class ZooAdapter():
       address -- new THREDDS server address
       """
 
-      pubkey = rsa.PublicKey.load_pkcs1(ZooAdapter.config.zoo_public_key)
+      pubkey = ZooAdapter.config.get_public_key()
 
-      encrypted_address = rsa.encrypt(quote_plus(address))
+      encrypted_address = rsa.encrypt(urllib.quote_plus(address),pubkey)
 
       host_url = (ZooAdapter.config.get_zoo_server_address() +
             '/cgi-bin/operators/zoo_loader.cgi?request=Execute'
@@ -64,9 +69,9 @@ class ZooAdapter():
 
 
    @staticmethod
-   def get_datafile_metadata(url):
-      """Get datafile metadata in JSON format
-
+   def get_datafile_variables(url):
+      """Get datafile variables in JSON format
+         
       Keyword arguments:
       url -- datafile remote url
       """
