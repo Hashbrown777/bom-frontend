@@ -58,7 +58,7 @@
           </div>
       </div>
       <div id="main">
-         <div class="wrapper">
+	 <div class="wrapper">
          {% if messages %}
             <div class="messages">
             <ul>
@@ -76,7 +76,8 @@
                 <h3>Sample Heading 3</h3>
                 <h4>Sample Heading 4</h4>
                 <h5>Sample Heading 5</h5>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum elementum ornare hendrerit. Nulla facilisi. Sed eget sem sed mi accumsan pretium. Aenean ullamcorper velit nec nunc lacinia, non malesuada velit auctor. Etiam interdum, ipsum eu semper posuere, orci orci posuere erat, quis condimentum lectus dolor ut ligula. Nulla facilisi. Nullam et imperdiet neque. Sed vehicula, purus id tincidunt accumsan, ligula mauris fermentum libero, vitae venenatis arcu dui in nisi. Donec quam diam, pulvinar et neque et, convallis ornare quam. Nullam vitae neque purus.</p>
+
+                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum elementum ornare hendrerit. Nulla facilisi. Sed eget sem sed mi accumsan pretium. Aenean ullamcorper velit nec nunc lacinia, non malesuada velit auctor. Etiam interdum, ipsum eu semper posuere, orci orci posuere erat, quis condimentum lectus dolor ut ligula. Nulla facilisi. Nullam et imperdiet neque. Sed vehicula, purus id tincidunt accumsan, ligula mauris fermentum libero, vitae venenatis arcu dui in nisi. Donec quam diam, pulvinar et neque et, convallis ornare quam. Nullam vitae neque purus.</p>
                 <p>Donec id porttitor nunc. Mauris feugiat sit amet est vitae gravida. In eleifend hendrerit massa, ac pellentesque lorem consequat sed. Donec turpis lectus, bibendum non dolor sit amet, scelerisque hendrerit sapien. Donec odio risus, dictum ac lacus nec, condimentum pellentesque metus. Integer augue enim, commodo vel sem ac, volutpat fringilla nisi. Proin et sapien quis lorem suscipit egestas. Ut viverra eros vel nisl scelerisque aliquam. Etiam id velit sit amet eros ullamcorper pulvinar nec vel dui.</p>
 
 	{% endblock %}
@@ -85,8 +86,12 @@
 
       <div id="footer">
         <div class="wrapper">
-	   <span>Climate Analyser </span>&copy <span>Bureau of Meteorology 2014-present</span>
+	   <p><span>Climate Analyser </span>&copy <span>Bureau of Meteorology 2014-present</span></p>
         </div>
+	<div id="zooming">
+	   <span class="zoom-in">Zoom In</span>
+	   <span class="zoom-out">Zoom Out</span>
+	</div>
       </div>
       <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
       <script src="{{ STATIC_URL }}/js/plugins.js"></script>
@@ -100,6 +105,20 @@
          e.src='//www.google-analytics.com/analytics.js';
          r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
          ga('create','UA-XXXXX-X');ga('send','pageview');
+      </script>
+      <script>
+  	 $(document).ready(function() {
+	 $('.zoom-in').click(function(){   
+         curSize= parseInt($('#main').css('font-size')) + 2;
+  	 if(curSize<=20)
+         	$('#main').css('font-size', curSize);
+         }); 
+  	 $('.zoom-out').click(function(){   
+         curSize= parseInt($('#main').css('font-size')) - 2;
+  	 if(curSize>=12)
+         	$('#main').css('font-size', curSize);
+         });
+	 });
       </script>
    </body>
 </html>
