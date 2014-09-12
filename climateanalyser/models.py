@@ -10,21 +10,26 @@ from common.models import Common
 import json
 
 class ClimateAnalyserConfig(SingletonModel):
+   """Configuration options for the app, to be modified in the backend."""
 
    class Meta:
-      verbose_name_plural = "ClimateAnalyser Config"
-      verbose_name = "ClimateAnalyser Config"
+      verbose_name_plural = "Config"
+      verbose_name = "Config"
 
    tilemill_server_address = models.CharField(max_length=255)
 
    def get_tilemill_server_address(self):
+      """ Return Tilemill server address ready for use. """
       return Common.prepare_config_address(self.tilemill_server_address)
 
 class DataFile(models.Model):
+   """A data file, which is cached on the local server."""
+
+   # original remote url of file 
    file_url = models.CharField(max_length=1000,unique=True)
    cached_file = models.CharField(max_length=1000)
    last_modified = models.DateTimeField('last modified')
-   metadata = JSONField()
+   variables = JSONField()
 
    def clean(self):
       #Create cached file and save data
@@ -33,29 +38,39 @@ class DataFile(models.Model):
       self.cached_file = hashlib.md5(self.file_url).hexdigest()
       urllib.urlretrieve(self.file_url, settings.CACHE_DIR + self.cached_file)
 
-      self.metadata = ZooAdapter.get_datafile_metadata(self.file_url)
+      self.variables = ZooAdapter.get_datafile_variables(self.file_url)
 
       self.last_modified = datetime.now()
 
    def get_variables(self):
-      return json.loads(self.metadata)
+      return json.loads(self.variables)
 
    def __unicode__(self):
       return self.file_url
 
 class Computation(models.Model):
-   created_by = models.ForeignKey(User)
-   created_date = models.DateTimeField('date created')
-   completed_date = models.DateTimeField('date completed',null=True,
-         blank=True)
+   """The operation performed on data files, such as correlate or regress."""
 
-   CALCULATION_CHOICES = (
+   CALC_CHOICES = (
          ('correlate', 'Correlate'),
          ('regress', 'Regress'),
    )
 
-   calculation = models.CharField(max_length=100,
-         choices=CALCULATION_CHOICES, default='correlate')
+   STATUS_CHOICES = (
+         ('scheduled', 'Scheduled'),
+         ('running', 'Running'),
+         ('successful', 'Successful'),
+         ('failed', 'Failed'),
+   )
+
+   created_by = models.ForeignKey(User)
+   created_date = models.DateTimeField('date created')
+   completed_date = models.DateTimeField('date completed',null=True,
+         blank=True)
+   status = models.CharField(max_length=100,choices=STATUS_CHOICES,
+         default='scheduled')
+   calculation = models.CharField(max_length=100,choices=CALC_CHOICES,
+         default='correlate')
 
    def result_wms(self):
       #Get the URL of the result from Zoo in WMS format
@@ -79,6 +94,9 @@ class Computation(models.Model):
       return ComputationData.objects.filter(computation=self).order_by('id')
 
 class ComputationData(models.Model):
+   """Link between Computation and DataFiles. Specific variables for data file
+   can be selected.
+   """
    datafile = models.ForeignKey(DataFile)   
    computation = models.ForeignKey(Computation)
    variables = JSONField()

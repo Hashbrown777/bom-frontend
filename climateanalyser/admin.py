@@ -5,16 +5,14 @@ from forms import *
 from solo.admin import SingletonModelAdmin
 from climateanalyser.models import ClimateAnalyserConfig
 
-
-
 class ComputationDataInline(admin.StackedInline):
    model = ComputationData
    form = ComputationDataForm
 
    class Media:
       js = ('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js',
-         'climateanalyser/js/jquery.cookie.min.js',
-         'climateanalyser/js/computationdataform.js',)
+            'climateanalyser/js/jquery.cookie.min.js',
+            'climateanalyser/js/computationdataform.js',)
 
 class AdminComputationForm(ComputationForm):
    class Meta:
@@ -37,9 +35,10 @@ class DataFileAdmin(admin.ModelAdmin):
       if obj: # edit form
          # make edit form a read-only 'profile' page
          self.form = AdminDataFileForm
-         self.form.fields = ['file_url', 'last_modified', 'cached_file', 'metadata']
+         self.form.fields = ['file_url', 'last_modified', 'cached_file',
+                             'variables']
          self.readonly_fields = ('file_url', 'last_modified', 'cached_file',
-               'metadata')
+                                 'variables')
       else: # add form
          self.form = DataFileForm
          self.form.fields = ['file_url']

@@ -105,6 +105,10 @@
                 </li>
             </ul>
         </div>
+	<div id="zooming">
+	   <span class="zoom-in">Zoom In</span>
+	   <span class="zoom-out">Zoom Out</span>
+	</div>
       </div>
       <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
       <script src="{{ STATIC_URL }}/js/plugins.js"></script>
@@ -118,6 +122,20 @@
          e.src='//www.google-analytics.com/analytics.js';
          r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
          ga('create','UA-XXXXX-X');ga('send','pageview');
+      </script>
+      <script>
+  	 $(document).ready(function() {
+	 $('.zoom-in').click(function(){   
+         curSize= parseInt($('#main').css('font-size')) + 2;
+  	 if(curSize<=20)
+         	$('#main').css('font-size', curSize);
+         }); 
+  	 $('.zoom-out').click(function(){   
+         curSize= parseInt($('#main').css('font-size')) - 2;
+  	 if(curSize>=12)
+         	$('#main').css('font-size', curSize);
+         });
+	 });
       </script>
    </body>
 </html>
