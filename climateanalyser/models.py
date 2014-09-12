@@ -33,14 +33,20 @@ class DataFile(models.Model):
 
    def clean(self):
       #Create cached file and save data
+      self._save_cache()
 
-      #file name is md5 string of url
-      self.cached_file = hashlib.md5(self.file_url).hexdigest()
-      urllib.urlretrieve(self.file_url, settings.CACHE_DIR + self.cached_file)
+      opendap_addr = (ZooAdapter.config.get_thredds_server_address() + 
+         '/thredds/dodsC/datafiles/' + self.cached_file)
 
-      self.variables = ZooAdapter.get_datafile_variables(self.file_url)
+      self.variables = ZooAdapter.get_datafile_variables(opendap_addr)
 
       self.last_modified = datetime.now()
+
+   def _save_cache(self):
+      #file name is md5 string of url
+      self.cached_file = hashlib.md5(self.file_url).hexdigest()
+      response = urllib.urlretrieve(self.file_url, 
+            settings.CACHE_DIR + self.cached_file)
 
    def get_variables(self):
       return json.loads(self.variables)
@@ -106,5 +112,4 @@ class ComputationData(models.Model):
       for variable in self.variables:
          if variable not in self.datafile.get_variables():
             raise ValidationError('Variable does not exist in Data File.')
-
 
