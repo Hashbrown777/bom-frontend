@@ -4,7 +4,7 @@
 
 body {
    height:100%;
-   background-color:#e1dfdc;
+   background-color:#f0eee1;
    line-height:1.5;
 }
 
@@ -59,6 +59,7 @@ tbody tr:hover {
    ========================================================================== */
 
 #header {
+   background-color:#e1dfdc;
 }
 
 #header .logo {
@@ -103,7 +104,6 @@ tbody tr:hover {
    ========================================================================== */
 
 #footer {
-   height:100%;
    padding:30px 0;
    background-color: #f0eeeb;
    border-top:2px solid #ccc;
@@ -148,6 +148,7 @@ tbody tr:hover {
 }
 
 #main {
+   background-color:#e1dfdc;
    min-height:400px;
    padding:20px 0px 60px 0px;
 }
