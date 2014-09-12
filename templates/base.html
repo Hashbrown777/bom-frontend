@@ -60,8 +60,8 @@
              <div class="clearfix"></div>
           </div>
       </div>
-      <div id="main" class="clearfix">
-         <div class="wrapper">
+      <div id="main">
+         <div class="wrapper clearfix">
          {% if messages %}
             <div class="messages">
             <ul>
@@ -79,8 +79,31 @@
       </div>
 
       <div id="footer">
-        <div class="wrapper">
-	   <span>Climate Analyser </span>&copy <span>Bureau of Meteorology 2014-present</span>
+         <div class="wrapper">
+	         <span>Climate Analyser </span>&copy <span>Bureau of Meteorology 2014-present</span>
+            <ul class="menu">
+                   <li>
+                       <a href="/">Home</a>
+                   </li>
+                {% if user.is_authenticated %}
+                   <li>
+                       <a href="/profile">Profile</a>
+                   </li>
+                   <li>
+                       <a href="/datafiles">Data Files</a>
+                   </li>
+                   <li>
+                       <a href="/computations">Computations</a>
+                   </li>
+                {% endif %}
+                <li>
+                    {% if user.is_authenticated %}
+                       <a href="/logout">Logout</a>
+                    {% else %}
+                       <a href="/login">Login</a>
+                    {% endif %}
+                </li>
+            </ul>
         </div>
       </div>
       <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>

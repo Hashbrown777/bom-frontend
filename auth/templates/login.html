@@ -8,6 +8,7 @@
 
    <form class="login_form" method="post" action="{% url 'django.contrib.auth.views.login' %}">
       {% csrf_token %}
+      <h1>Login</h1>
       <table>
          <tr>
             <td>{{ form.username.label_tag }}</td>
@@ -18,14 +19,12 @@
             <td>{{ form.password }}</td>
          </tr>
          <tr>
-            <td>Forgot your password? <a href="/user/password/reset">Click here</a><td>
-         </tr>
-         <tr>
-            <td>Don't have an account? <a href="/register">Register</a><td>
+            <td><a href="/user/password/reset">Forgot your password?</a></td>
+            <td><a href="/register">Don't have an account?</a></td>
          </tr>
       </table>
 
-      <input type="submit" value="login" />
+      <input type="submit" value="Login" />
       <input type="hidden" name="next" value="{{ next }}" />
    </form>
 

@@ -68,7 +68,7 @@ tbody tr:hover {
 
 #header .logo a{
    font-family:Helvetica;
-   font-size:40px;
+   font-size:30px;
    text-decoration: none;
 }
 
@@ -81,7 +81,7 @@ tbody tr:hover {
 
 #header .menu li {
    float:left;
-   margin-left:20px;
+   margin-left:10px;
    background:#2179cc;
    text-align: center;
 }
@@ -109,18 +109,30 @@ tbody tr:hover {
    border-top:2px solid #ccc;
 }
 
-#footer .footer-menu {
+#footer .menu {
    padding:0;
    margin:0;
    list-style:none;
 }
 
-#footer .footer-menu a {
+#footer .menu li a {
    text-decoration:underline;
 }
 
+#footer .menu li {
+   display:block;
+   float:left;
+}
+
+#footer .menu li:after {
+   content:"|";
+   padding: 0 10px 0 5px;
+}
+#footer .menu li:last-child:after {
+   content:'';
+}
 #footer .wrapper{
-   text-align:center;
+   text-align:left;
 }
 
 /* ==========================================================================
@@ -170,7 +182,7 @@ tbody tr:hover {
 #main .home-banner {
    background:#f0eeeb;
    height:315px;
-
+   margin-bottom:20px;
 }
 #main .home-module {
    background:#f0eeeb;
@@ -192,25 +204,25 @@ tbody tr:hover {
    padding:20px;
 }
 
-#main .wrapper li.error{
+#main .wrapper li.error {
    text-decoration:none;
    color:red;
    list-style-type:none;
 }
 
-#main .wrapper ul{
+#main .wrapper ul {
    padding: 0;
 }
 
-.wrapper p.error{
+.wrapper p.error {
    color:red;
 }
 
-#id_username, #id_password{
+#id_username, #id_password {
    height:20px;
 }
 
-#id_username, #id_password:focus{
+#id_username, #id_password:focus {
    outline: 0px;
 }
 
@@ -228,7 +240,7 @@ tbody tr:hover {
    width:222px;
 }
 
-#main .wrapper form > input:hover{
+#main .wrapper form > input:hover {
    background:#1a63a9;
 }
 
@@ -236,4 +248,45 @@ tbody tr:hover {
    width:110px;
    display:block;
    float:left;
+}
+
+/* #############################################################
+ * LOGIN PAGE
+ * ############################################################# */
+
+#main .login_form {
+   width:340px;
+   padding:30px 50px;
+   background:#f0eeeb;
+   margin:0 auto;
+}
+
+#main .login_form h1 {
+   text-align:center;
+   margin-bottom:30px;
+}
+
+#main .login_form tr:hover {
+   background:none;
+}
+
+#main .login_form input[type='submit'] {
+   font-size:18px;
+}
+/* #############################################################
+ * PROFILE PAGE
+ * ############################################################# */
+
+#main .profile-info {
+   background:#f0eeeb;
+   padding:30px;
+}
+
+#main .profile-info p {
+  font-size:18px;
+  font-weight:bold;
+}
+
+#main .profile-info p span {
+   font-weight:normal;
 }
