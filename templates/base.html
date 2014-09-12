@@ -81,7 +81,7 @@
       <div id="footer">
          <div class="wrapper">
 	         <span>Climate Analyser </span>&copy <span>Bureau of Meteorology 2014-present</span>
-            <ul class="menu">
+            <ul class="menu clearfix">
                    <li>
                        <a href="/">Home</a>
                    </li>
@@ -104,11 +104,12 @@
                     {% endif %}
                 </li>
             </ul>
+
+	         <div id="zooming">
+	            <a title="Increase text size" href="javascript:void 0;" class="zoom-in button">A+</a>
+	            <a title="Decrease text size" href="javascript:void 0;" class="zoom-out button">A-</a>
+	         </div>
         </div>
-	<div id="zooming">
-	   <span class="zoom-in">A+</span>
-	   <span class="zoom-out">A-</span>
-	</div>
       </div>
       <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
       <script src="{{ STATIC_URL }}/js/plugins.js"></script>
