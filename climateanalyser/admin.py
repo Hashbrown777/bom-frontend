@@ -29,16 +29,14 @@ class AdminDataFileForm(DataFileForm):
       css = { 'all' : ('climateanalyser/css/admindatafileform.css',) }
 
 class DataFileAdmin(admin.ModelAdmin):
-   list_display = ['id','file_url','cached_file','last_modified']
+   list_display = ['id','file_url','cached_file']
 
    def get_form(self, request, obj=None, **kwargs):
       if obj: # edit form
          # make edit form a read-only 'profile' page
          self.form = AdminDataFileForm
-         self.form.fields = ['file_url', 'last_modified', 'cached_file',
-                             'variables']
-         self.readonly_fields = ('file_url', 'last_modified', 'cached_file',
-                                 'variables')
+         self.form.fields = ['file_url', 'cached_file', 'variables']
+         self.readonly_fields = ('file_url',  'cached_file', 'variables')
       else: # add form
          self.form = DataFileForm
          self.form.fields = ['file_url']
