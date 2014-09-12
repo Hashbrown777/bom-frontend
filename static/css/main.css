@@ -291,3 +291,33 @@ tbody tr:hover {
 #main .profile-info p span {
    font-weight:normal;
 }
+
+
+/* #############################################################
+ * NEW COMPUTAITION PAGE
+ * ############################################################# */
+
+#main .new_computation .datafile_formset_new {
+   background:#f0eeeb;
+   width:48%;
+   box-sizing:border-box;
+   padding:1em 2em;
+   min-height:225px;
+   margin-bottom:20px;
+}
+
+#main .new_computation .datafile_formset_new:nth-child(2n+1) {
+   float:right;
+}
+
+#main .new_computation .datafile_formset_new:nth-child(2n+2) {
+   float:left;
+}
+
+#main .new_computation .datafile_formset_new select {
+   width:100%;
+}
+
+#main .new_computation .form_buttons {
+   clear:both;
+}
