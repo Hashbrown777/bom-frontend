@@ -288,7 +288,7 @@ td {
 }
 
 /* #############################################################
- * COMPUTAITION PAGE
+ * COMPUTAITIONS PAGE
  * ############################################################# */
 
 #main .controls {
@@ -309,6 +309,31 @@ td {
    width:78%;
    padding-right:2%;
    background:#f0eeeb;
+}
+
+/* #############################################################
+ * COMPUTAITION PAGE
+ * ############################################################# */
+#main .computation {
+   float:left;
+   width:100%;
+   box-sizing:border-box;
+   padding:20px;
+   background:#f0eeeb;
+   margin-bottom:20px;
+}
+
+#main .data_files {
+   float:right;
+   width:100%;
+   background:#f0eeeb;
+   margin-top:20px;
+   padding:20px;
+   box-sizing:border-box;
+}
+
+#main .data_files table {
+   width:100%;
 }
 
 /* #############################################################
@@ -338,4 +363,15 @@ td {
 
 #main .new_computation .form_buttons {
    clear:both;
+}
+
+/* #############################################################
+ * DATA FILES PAGE
+ * ############################################################# */
+
+#main .datafiles {
+   float:left;
+   width:78%;
+   padding-right:2%;
+   background:#f0eeeb;
 }

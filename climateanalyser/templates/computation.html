@@ -42,12 +42,14 @@
       <span class="key"><strong>Result</strong></span>
       <span class="value"><a href="{{ computation.result_nc }}">Download as NC File</a></span>
    </div>
+</div>
 
-   <div id="map">
-   </div>
-
+<div class="clearfix"></div>
+<div id="map">
+</div>
+<div class="data_files">
    <h2>Data Files</h2>
-   <table class="data_files">
+   <table>
       <thead>
          <tr>
             <th>ID</th>
@@ -65,7 +67,6 @@
       {% endfor %}
       </tbody>
    </table>
-
 </div>
-
 {% endblock %}
+
