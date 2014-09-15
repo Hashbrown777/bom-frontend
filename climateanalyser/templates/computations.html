@@ -7,13 +7,11 @@
 <div class="controls">
 {% if user.username %}
    <a href="/create_computation" class="button create_computation">New Computation</a/>
-   <span class="view_controls">
    <a href="/computations" class="button all_computations 
       {% if show_mine == False %} disabled {% endif %}">All Computations</a>
 
    <a href="/computations?show_mine=true" class="button my_computations
       {% if show_mine %} disabled {% endif %}">My Computations</a>
-   </span>
    <div class="clearfix"></div>
 {% endif %}
 </div>

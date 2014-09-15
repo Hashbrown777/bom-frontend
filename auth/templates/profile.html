@@ -1,15 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-   <div class="profile-buttons">
-      <a href="#" class="button edit-profile">Edit profile</a>
-      <a href="#" class="button my-computations">My computations</a>
-   </div>
    <div class="profile-info">
       <h1>User Profile</h1>
+      <div class="clearfix"></div>
       <p>Username: <span class="username">{{ profile.username }}</span></p>
       <p>First Name: <span class="first-name">{{ profile.first_name }}</span></p>
       <p>Last Name: <span class="last-name"{{ profile.last_name }}</span></p>
       <p>Email: <span class="email">{{ profile.email }}</span></p>
+      <div class="profile-buttons">
+         <a href="#" class="button edit-profile">Edit profile</a>
+      </div>
    </div>
+
+   <table class="my-computations">
+      <thead>
+         <tr>
+            <th>ID</th>
+            <th>Calculation</th>
+            <th>Status</th>
+            <th>Created Date</th>
+         </tr>
+      </thead>
+      <tbody>
+      {% for computation in mycomputations %}
+         <tr>
+            <td><a href="/computation?id={{ computation.id }}">
+                  #{{ computation.id }}</a></td>
+            <td>{{ computation.status.capitalize }}</td>
+            <td>{{ computation.calculation.capitalize }}</td>
+            <td>{{ computation.created_date }}</td>
+         </tr>
+      {% empty %}
+         <tr>
+            <td colspan=6><em>
+               No computations were found. Why don't you
+               <a href="/create_computation">create one</a>?
+            </em></td>
+         </tr>
+      {% endfor %}
+      </tbody>
+   </table>
+
 {% endblock %}
