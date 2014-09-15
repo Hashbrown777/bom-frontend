@@ -98,7 +98,7 @@ TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'),)
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
-CACHE_DIR = BASE_DIR + '/../../datafiles/'
+CACHE_DIR = BASE_DIR + '/../../datafiles/inputs/'
 
 AUTH_PROFILE_MODULE = 'auth.User'
 
