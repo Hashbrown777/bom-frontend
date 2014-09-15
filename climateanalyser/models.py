@@ -49,7 +49,7 @@ class DataFile(models.Model):
    def _get_opendap_addr(self):
       """Get the address of the file on OpenDAP, after saving cache."""
       return (ZooAdapter.config.get_thredds_server_address() + 
-         '/thredds/dodsC/datafiles/' + self.cached_file)
+         '/thredds/dodsC/datafiles/inputs/' + self.cached_file)
    
    def update_cache(self):
       """ Update our local cache file, ONLY if necessary."""
