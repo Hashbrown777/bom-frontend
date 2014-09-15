@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 class Common():
 
@@ -8,5 +9,14 @@ class Common():
       if address[:3] is not 'http':
          return 'http://' + address
       return address
+
+   @staticmethod
+   def get_http_last_modified(address):
+
+      headers = urllib.urlopen(address).info()
+      date = datetime.datetime.strptime(headers['Last-Modified'], 
+            '%a, %d %b %Y %H:%M:%S GMT')
+
+      return date
 
 

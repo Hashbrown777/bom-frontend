@@ -1,5 +1,5 @@
 from django.conf import settings
-from datetime import datetime
+import datetime
 from django.db import models
 from django.contrib.auth.models import User
 import hashlib, urllib 
@@ -28,19 +28,40 @@ class DataFile(models.Model):
    # original remote url of file 
    file_url = models.CharField(max_length=1000,unique=True)
    cached_file = models.CharField(max_length=1000)
-   last_modified = models.DateTimeField('last modified')
    variables = JSONField()
 
    def clean(self):
       #Create cached file and save data
+      self._save_cache()
 
-      #file name is md5 string of url
-      self.cached_file = hashlib.md5(self.file_url).hexdigest()
-      urllib.urlretrieve(self.file_url, settings.CACHE_DIR + self.cached_file)
-
-      self.variables = ZooAdapter.get_datafile_variables(self.file_url)
+      self.variables = ZooAdapter.get_datafile_variables(
+            self._get_opendap_addr())
 
       self.last_modified = datetime.now()
+
+   def _save_cache(self):
+      """ Cache the file on the OpenDAP server."""
+      #file name is md5 string of url
+      self.cached_file = hashlib.md5(self.file_url).hexdigest()
+      response = urllib.urlretrieve(self.file_url, 
+            settings.CACHE_DIR + self.cached_file)
+
+   def _get_opendap_addr(self):
+      """Get the address of the file on OpenDAP, after saving cache."""
+      return (ZooAdapter.config.get_thredds_server_address() + 
+         '/thredds/dodsC/datafiles/' + self.cached_file)
+   
+   def update_cache(self):
+      """ Update our local cache file, ONLY if necessary."""
+
+      dds_addr = self._get_opendap_addr() + '.dds'
+
+      local_last_modified = Common.get_http_last_modified(dds_addr)
+      remote_last_modified = Common.get_http_last_modified(self.file_url)
+
+      # update cache if necessary
+      if remote_last_modified > local_last_modified:
+         self.__save_cache()
 
    def get_variables(self):
       return json.loads(self.variables)
@@ -106,5 +127,4 @@ class ComputationData(models.Model):
       for variable in self.variables:
          if variable not in self.datafile.get_variables():
             raise ValidationError('Variable does not exist in Data File.')
-
 
