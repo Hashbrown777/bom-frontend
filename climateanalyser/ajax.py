@@ -52,3 +52,21 @@ def update_computation_status(request):
       response = 'success'
 
    return HttpResponse(response)
+
+# Returns the maximum and minimum values on a map
+def get_data_range(request):
+   # Default is -50 to 50
+   response = '{"min": -50,"max": 50}'
+
+   map_url = request.GET.get('wms_resource')
+   layer = request.GET.get('layer')
+
+   resp = urllib.urlopen(map_url + '?service=WMS&version=1.3.0'
+                         + '&request=GetMetadata&item=minmax&layers='
+                         + layer + '&srs=EPSG%3A4326&bbox=-180,-90,180,90'
+                         + '&width=50&height=50')
+
+   if resp.getcode() == 200:
+      response = resp.read()
+
+   return HttpResponse(response, content_type="application/json")
