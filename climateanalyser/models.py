@@ -76,6 +76,9 @@ class Calculation(models.Model):
    min_datafiles = models.IntegerField()
    max_datafiles = models.IntegerField()
 
+   def __unicode__(self):
+      return self.name.title()
+
 class Computation(models.Model):
    """The operation performed on data files, such as correlate or regress."""
 

@@ -157,7 +157,7 @@ class ZooAdapter():
 
       #file containing list of result links
       descriptor_file = ZooAdapter.get_descriptor_file(computationdata_list,
-            calculation)
+            calculation.name)
 
       if not descriptor_file:
          return
