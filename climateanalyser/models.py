@@ -69,13 +69,15 @@ class DataFile(models.Model):
    def __unicode__(self):
       return self.file_url
 
+class Calculation(models.Model):
+   """ Represents calculation to run on Computation, eg 'regress', 
+   'correlate'. """
+   name = models.CharField(max_length=100,unique=True)
+   min_datafiles = models.IntegerField()
+   max_datafiles = models.IntegerField()
+
 class Computation(models.Model):
    """The operation performed on data files, such as correlate or regress."""
-
-   CALC_CHOICES = (
-         ('correlate', 'Correlate'),
-         ('regress', 'Regress'),
-   )
 
    STATUS_CHOICES = (
          ('scheduled', 'Scheduled'),
@@ -90,8 +92,7 @@ class Computation(models.Model):
          blank=True)
    status = models.CharField(max_length=100,choices=STATUS_CHOICES,
          default='scheduled')
-   calculation = models.CharField(max_length=100,choices=CALC_CHOICES,
-         default='correlate')
+   calculation = models.ForeignKey(Calculation)
 
    def result_wms(self):
       #Get the URL of the result from Zoo in WMS format
