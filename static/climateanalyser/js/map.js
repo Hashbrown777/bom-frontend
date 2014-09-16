@@ -90,11 +90,18 @@
       map.on('click', function(e) {
          popup.setLatLng(e.latlng);
 
+         var lon = e.latlng.lng;
+         if (lon <= -180.0) {
+            lon = 180.0 - ((-(lon + 180.0)) % 360.0);
+         }
+         if (lon > 180.0) {
+            lon = ((lon + 180.0) % 360.0) - 180.0;
+         }
          var valueURL = "/get_data_value?wms_resource="
                         + encodeURIComponent(wmsResource)
                         + "&layer=" + encodeURIComponent(calculation)
                         + "&lat=" + e.latlng.lat
-                        + "&lon=" + (((e.latlng.lng + 180.0) % 360.0) - 180.0);
+                        + "&lon=" + lon;
 
          $.ajax({
             url: valueURL
