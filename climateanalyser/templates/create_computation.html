@@ -7,10 +7,13 @@
    {{ formset.media }}
    {% csrf_token %}
    {{ form.as_p }}
-   <div class="datafile_formset">
    {{ formset.management_form }}
+
    {% for form in formset %}
+      <div class="datafile_formset">
+
       {% for field in form.visible_fields %}
+
 
          {% if field.label != "Delete" %}
             <p>{{ field.errors }}</p>
@@ -18,8 +21,12 @@
          {% endif %}
 
       {% endfor %}
+
+      {% if forloop.counter > 1 %}
+         <button class="red button remove_button">Remove</button>
+      {% endif %}
+      </div>
    {% endfor %}
-   </div>
    <button id="add_datafile" class="button">Add Datafile</button>
    <input type="submit" value="Submit" class="button" />
 </form>
