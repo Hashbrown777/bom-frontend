@@ -44,6 +44,11 @@ class ZooAdapterConfig(SingletonModel):
    def __unicode__(self):
       return u"Zoo Adapter Configuration"
 
+class ZooComputationStatus(models.Model):
+   code = models.IntegerField(primary_key=True)
+   status = models.CharField(max_length=100)
+   details = models.CharField(max_length=1000)
+
 class ZooAdapter():
 
    config = ZooAdapterConfig.objects.get()
@@ -168,6 +173,7 @@ class ZooAdapter():
       """
 
       regex = '\[' + format + '\](.*?)\[/' + format + '\]'
+      result_url = ''
 
       for line in filehandle.readlines():
          match = re.search(regex, line)
@@ -175,8 +181,9 @@ class ZooAdapter():
             result_url = match.group(1)
             break
 
-      # decode html entities
-      html_parser = HTMLParser.HTMLParser()
-      result_url = html_parser.unescape(result_url)
+      if result_url:
+         # decode html entities
+         html_parser = HTMLParser.HTMLParser()
+         result_url = html_parser.unescape(result_url)
 
       return result_url
