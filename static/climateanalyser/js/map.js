@@ -71,6 +71,8 @@
       largest = data.max;
 
       var map = L.map('map').setView([-37.81, 144.96], 2);
+      var popup = L.popup().setContent("<p>Hi</p>");
+      var displayMarker = false;
       var layer = L.tileLayer.wms(wmsResource, {
                layers: calculation,
                format: 'image/png',   
@@ -84,6 +86,32 @@
                detectRetina: true
                }).addTo(map);
       map.addControl(new WmsLegend(400, smallest, largest));
-   });
-   });
+
+      map.on('click', function(e) {
+         popup.setLatLng(e.latlng);
+
+         var lon = e.latlng.lng;
+         if (lon <= -180.0) {
+            lon = 180.0 - ((-(lon + 180.0)) % 360.0);
+         }
+         if (lon > 180.0) {
+            lon = ((lon + 180.0) % 360.0) - 180.0;
+         }
+         var valueURL = "/get_data_value?wms_resource="
+                        + encodeURIComponent(wmsResource)
+                        + "&layer=" + encodeURIComponent(calculation)
+                        + "&lat=" + e.latlng.lat
+                        + "&lon=" + lon;
+
+         $.ajax({
+            url: valueURL
+         })
+         .done(function( data ) {
+            popup.setContent("<p><strong>Value: </strong>"+data.value+"</p>");
+            if (!displayMarker) {
+               popup.addTo(map);
+            }
+         });
+      });
+   });});
 })(jQuery);

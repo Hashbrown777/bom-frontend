@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.views import password_reset, password_reset_confirm
 from django.core.urlresolvers import reverse
 from django.contrib.auth.views import password_reset, password_reset_confirm
+from climateanalyser.models import Computation
 
 def index(request):
    t = loader.get_template('index.html')
@@ -52,8 +53,9 @@ def change_password(request):
 
 def profile(request):
    profile = request.user
+   mycomputations = Computation.objects.filter(created_by = request.user)
    t = loader.get_template('profile.html')
-   context = RequestContext(request, { 'profile':profile })
+   context = RequestContext(request, { 'profile':profile, 'mycomputations':mycomputations })
    html = t.render(context)
    return HttpResponse(html)
 

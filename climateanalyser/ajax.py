@@ -64,9 +64,35 @@ def get_data_range(request):
    resp = urllib.urlopen(map_url + '?service=WMS&version=1.3.0'
                          + '&request=GetMetadata&item=minmax&layers='
                          + layer + '&srs=EPSG%3A4326&bbox=-180,-90,180,90'
-                         + '&width=50&height=50')
+                         + '&width=500&height=500')
 
    if resp.getcode() == 200:
       response = resp.read()
 
-   return HttpResponse(response, content_type="application/json")
+   return HttpResponse(response, content_type='application/json')
+
+def get_data_value(request):
+   response = '{"value":null}';
+
+   map_url = request.GET.get('wms_resource')
+   layer = request.GET.get('layer')
+   lat = float(request.GET.get('lat'))
+   lon = float(request.GET.get('lon'))
+   coords = (str(max([-180.0, lon - 0.00001])) + ","
+            + str(max([-90, lat - 0.00001])) + ","
+            + str(min([180.0, lon + 0.00001])) + ","
+            + str(min([lat + 0.00001])));
+
+   url = (map_url + '?service=WMS&version=1.3.0' +
+                    '&request=GetMetadata&item=minmax&layers=' +
+                    layer + '&srs=EPSG%3A4326&bbox=' + coords +
+                    '&width=50&height=50')
+
+   resp = urllib.urlopen(url)
+   response = '{"url": "' + url + '"}'
+
+   if resp.getcode() == 200:
+      respJSON = json.loads(resp.read())
+      response = '{"value":' + str(respJSON[u'max']) + '}'
+
+   return HttpResponse(response, content_type='application/json')
