@@ -7,6 +7,7 @@ from jsonfield import JSONField
 from zooadapter.models import ZooAdapter,ZooComputationStatus
 from solo.models import SingletonModel
 from common.models import Common
+from django.core.exceptions import ValidationError
 import json
 
 class ClimateAnalyserConfig(SingletonModel):

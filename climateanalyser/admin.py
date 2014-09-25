@@ -8,6 +8,7 @@ from climateanalyser.models import ClimateAnalyserConfig
 class ComputationDataInline(admin.StackedInline):
    model = ComputationData
    form = ComputationDataForm
+   extra = 1
 
    class Media:
       js = ('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js',

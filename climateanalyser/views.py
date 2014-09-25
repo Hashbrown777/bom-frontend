@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.http import StreamingHttpResponse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.forms.util import ErrorList
 
 def index(request):
    """Default app page. It's just blank. """
@@ -57,20 +58,31 @@ def create_computation(request, computation_pk=None):
          form=ComputationDataForm,extra=1)
   
    if request.method == 'POST':
-      form = ComputationForm(request.POST,instance=computation,request=request)
+      form = ComputationForm(request.POST,instance=computation)
       formset = ComputationFormSet(request.POST,instance=computation)
 
       if form.is_valid() and formset.is_valid():
-         form.save()
-         formset.save()
-         computation.schedule_in_zoo()
-         # redirect on success
-         messages.success(request, 'Computation successfully created!')
-         return HttpResponseRedirect('/computations')
+
+         calc = form.cleaned_data['calculation']
+         data_count = int(formset.data['computationdata_set-TOTAL_FORMS'])
+
+         # check if number of datafiles is OK for the selected calculation
+         if data_count >= calc.min_datafiles and \
+                          data_count <= calc.max_datafiles:
+            form.save()
+            formset.save()
+            computation.schedule_in_zoo()
+            # redirect on success
+            messages.success(request, 'Computation successfully created!')
+            return HttpResponseRedirect('/computations')
+
+         # invalid number of datafiles
+         form._errors["calculation"] = ErrorList(
+               [u'Invalid number of datafiles.'])
 
    else:
       form = ComputationForm(initial={ 'created_by': request.user },
-            instance=computation,request=request)
+            instance=computation)
       formset = ComputationFormSet(instance=computation)
 
    return render(request, 'create_computation.html', 
