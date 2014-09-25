@@ -179,13 +179,16 @@ class ZooAdapter():
             
       #append all data files
       for data in computation.get_computationdata():
-         datafiles_str += data.datafile.file_url + ','
+         datafiles_str += data.datafile.file_url + '?'
+         datafiles_str += ','.join(data.variables) + ','
 
       #Remove trailing comma
       descriptor_file += datafiles_str[:-1]
 
       #add computation id
       descriptor_file += ';jobid=' + str(computation.id)
+
+      print descriptor_file
 
       return descriptor_file
 
