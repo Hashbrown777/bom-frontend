@@ -4,7 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 import hashlib, urllib 
 from jsonfield import JSONField
-from zooadapter.models import ZooAdapter
+from zooadapter.models import ZooAdapter,ZooComputationStatus
 from solo.models import SingletonModel
 from common.models import Common
 import json
@@ -82,37 +82,32 @@ class Calculation(models.Model):
 class Computation(models.Model):
    """The operation performed on data files, such as correlate or regress."""
 
-   STATUS_CHOICES = (
-         ('scheduled', 'Scheduled'),
-         ('running', 'Running'),
-         ('successful', 'Successful'),
-         ('failed', 'Failed'),
-   )
+   DEFAULT_STATUS_ID = 0 # scheduled
 
    created_by = models.ForeignKey(User)
-   created_date = models.DateTimeField('date created')
+   created_date = models.DateTimeField('date created',default=datetime.now())
    completed_date = models.DateTimeField('date completed',null=True,
          blank=True)
-   status = models.CharField(max_length=100,choices=STATUS_CHOICES,
-         default='scheduled')
+   status = models.ForeignKey(ZooComputationStatus,default=DEFAULT_STATUS_ID)
    calculation = models.ForeignKey(Calculation)
    result_wms = models.CharField(max_length=100,blank=True)
    result_nc = models.CharField(max_length=100,blank=True)
    result_opendap = models.CharField(max_length=100,blank=True)
 
-   def clean(self):
-      self.created_date = datetime.now()
-
    def get_computationdata(self):
       return ComputationData.objects.filter(computation=self).order_by('id')
 
    def schedule_in_zoo(self):
-      result_links = ZooAdapter.schedule_computation(self)
 
-      self.result_wms = result_links['wms']
-      self.result_nc = result_links['nc']
-      self.result_opendap = result_links['opendap']
+      result_bundle = ZooAdapter.schedule_computation(self)
+
+      self.status = result_bundle['status']
+
+      self.result_wms = result_bundle['result_links']['wms']
+      self.result_nc = result_bundle['result_links']['nc']
+      self.result_opendap = result_bundle['result_links']['opendap']
       self.save()
+
 
 class ComputationData(models.Model):
    """Link between Computation and DataFiles. Specific variables for data file

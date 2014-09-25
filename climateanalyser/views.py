@@ -63,6 +63,7 @@ def create_computation(request, computation_pk=None):
       if form.is_valid() and formset.is_valid():
          form.save()
          formset.save()
+         computation.schedule_in_zoo()
          # redirect on success
          messages.success(request, 'Computation successfully created!')
          return HttpResponseRedirect('/computations')
