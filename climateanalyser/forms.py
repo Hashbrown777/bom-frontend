@@ -33,3 +33,16 @@ class ComputationForm(ModelForm):
    class Meta:
       model = Computation
       fields = ['calculation','created_by']
+
+   def clean(self):
+      cleaned_data = super(ComputationForm,self).clean()
+
+      # Check number of data files appropriate for calculation
+
+      calc = cleaned_data.get('calculation')
+      data_count = int(self.data.get('computationdata_set-TOTAL_FORMS'))
+
+      if data_count < calc.min_datafiles or data_count > calc.max_datafiles:
+         raise forms.ValidationError('Invalid number of datafiles.')
+
+      return cleaned_data

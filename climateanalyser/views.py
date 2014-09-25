@@ -63,22 +63,12 @@ def create_computation(request, computation_pk=None):
 
       if form.is_valid() and formset.is_valid():
 
-         calc = form.cleaned_data['calculation']
-         data_count = int(formset.data['computationdata_set-TOTAL_FORMS'])
-
-         # check if number of datafiles is OK for the selected calculation
-         if data_count >= calc.min_datafiles and \
-                          data_count <= calc.max_datafiles:
-            form.save()
-            formset.save()
-            computation.schedule_in_zoo()
-            # redirect on success
-            messages.success(request, 'Computation successfully created!')
-            return HttpResponseRedirect('/computations')
-
-         # invalid number of datafiles
-         form._errors["calculation"] = ErrorList(
-               [u'Invalid number of datafiles.'])
+         form.save()
+         formset.save()
+         computation.schedule_in_zoo()
+         # redirect on success
+         messages.success(request, 'Computation successfully created!')
+         return HttpResponseRedirect('/computations')
 
    else:
       form = ComputationForm(initial={ 'created_by': request.user },
