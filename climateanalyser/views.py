@@ -57,7 +57,7 @@ def create_computation(request, computation_pk=None):
          form=ComputationDataForm,extra=1)
   
    if request.method == 'POST':
-      form = ComputationForm(request.POST,instance=computation)
+      form = ComputationForm(request.POST,instance=computation,request=request)
       formset = ComputationFormSet(request.POST,instance=computation)
 
       if form.is_valid() and formset.is_valid():
@@ -70,7 +70,7 @@ def create_computation(request, computation_pk=None):
 
    else:
       form = ComputationForm(initial={ 'created_by': request.user },
-            instance=computation)
+            instance=computation,request=request)
       formset = ComputationFormSet(instance=computation)
 
    return render(request, 'create_computation.html', 
