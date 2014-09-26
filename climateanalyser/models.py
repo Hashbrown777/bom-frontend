@@ -98,7 +98,41 @@ class Computation(models.Model):
    def get_computationdata(self):
       return ComputationData.objects.filter(computation=self).order_by('id')
 
+   def _check_for_existing_result(self):
+
+      data_list = self.get_computationdata()
+
+      where_clauses = []
+
+      for data in data_list: 
+
+         json_str = '[' + ','.join(data.variables) + ']'
+
+         where_clauses.append('(df.id = ' + data.datafile.id 
+               + ' AND cd.variables = ' + json_str + ')')
+
+      query_str = ('SELECT c.* FROM climateanalyser_computation as c'
+                   ' INNER JOIN climateanalyser_computationdata as cd'
+                   ' on c.id = cd.computation_id'
+                   ' INNER JOIN climateanalyser_datafile as df'
+                   ' on cd.datafile_id = df.id'
+                   ' WHERE' ' OR '.join(where_clauses) +
+                   ' GROUP BY c.id'
+                   ' HAVING count(df.id) = ' + len(data_list))
+
+      return Computation.objects.raw(query_str)
+
    def schedule_in_zoo(self):
+
+      existing_computation = self._check_for_existing_result()
+
+      if existing_computation: 
+
+         self.status = existing_computation.status
+         self.result_wms = existing_computation.result_wms
+         self.result_nc = existing_computation.result_nc
+         self.result_opendap = existing_computation.result_opendap
+         return
 
       result_bundle = ZooAdapter.schedule_computation(self)
 
