@@ -91,14 +91,15 @@ class Computation(models.Model):
          blank=True)
    status = models.ForeignKey(ZooComputationStatus,default=DEFAULT_STATUS_ID)
    calculation = models.ForeignKey(Calculation)
-   result_wms = models.CharField(max_length=100,blank=True)
-   result_nc = models.CharField(max_length=100,blank=True)
-   result_opendap = models.CharField(max_length=100,blank=True)
+   result_wms = models.CharField(max_length=1000,blank=True)
+   result_nc = models.CharField(max_length=1000,blank=True)
+   result_opendap = models.CharField(max_length=1000,blank=True)
 
    def get_computationdata(self):
       return ComputationData.objects.filter(computation=self).order_by('id')
 
    def _check_for_existing_result(self):
+      """Try to find a Computation that has the same data as this one."""
 
       data_list = self.get_computationdata()
 
@@ -106,23 +107,36 @@ class Computation(models.Model):
 
       for data in data_list: 
 
-         json_str = '[' + ','.join(data.variables) + ']'
+         json_str = '["' + '","'.join(data.variables) + '"]'
 
-         where_clauses.append('(df.id = ' + data.datafile.id 
-               + ' AND cd.variables = ' + json_str + ')')
+         where_clauses.append('(df.id = ' + str(data.datafile.id) 
+               + ' AND cd.variables = \'' + json_str + '\')')
 
-      query_str = ('SELECT c.* FROM climateanalyser_computation as c'
-                   ' INNER JOIN climateanalyser_computationdata as cd'
-                   ' on c.id = cd.computation_id'
+      # look for computation with same data!
+      query_str = ('SELECT * FROM climateanalyser_computation WHERE id IN'
+                   ' (SELECT cd.computation_id'
+                   ' FROM climateanalyser_computationdata as cd'
                    ' INNER JOIN climateanalyser_datafile as df'
                    ' on cd.datafile_id = df.id'
-                   ' WHERE' ' OR '.join(where_clauses) +
-                   ' GROUP BY c.id'
-                   ' HAVING count(df.id) = ' + len(data_list))
+                   ' WHERE' + ' OR '.join(where_clauses) +
+                   ' AND cd.computation_id != ' + str(self.id) +
+                   ' GROUP BY cd.computation_id'
+                   ' HAVING count(df.id) = ' + str(len(data_list)) +
+                   ' AND calculation_id = ' + str(self.calculation.id) +
+                   ' ) LIMIT 1')
 
-      return Computation.objects.raw(query_str)
+      computations = Computation.objects.raw(query_str)
+
+      if (len(list(computations)) > 0):
+         return computations[0]
+
+      return None
 
    def schedule_in_zoo(self):
+      """Schedule a Computation as a job in Zoo. 
+         
+      If a Computation with the same data exist, use its result data and
+      don't schedule anything."""
 
       existing_computation = self._check_for_existing_result()
 
@@ -132,15 +146,16 @@ class Computation(models.Model):
          self.result_wms = existing_computation.result_wms
          self.result_nc = existing_computation.result_nc
          self.result_opendap = existing_computation.result_opendap
-         return
 
-      result_bundle = ZooAdapter.schedule_computation(self)
+      else:
 
-      self.status = result_bundle['status']
+         result_bundle = ZooAdapter.schedule_computation(self)
 
-      self.result_wms = result_bundle['result_links']['wms']
-      self.result_nc = result_bundle['result_links']['nc']
-      self.result_opendap = result_bundle['result_links']['opendap']
+         self.status = result_bundle['status']
+         self.result_wms = result_bundle['result_links']['wms']
+         self.result_nc = result_bundle['result_links']['nc']
+         self.result_opendap = result_bundle['result_links']['opendap']
+
       self.save()
 
 
