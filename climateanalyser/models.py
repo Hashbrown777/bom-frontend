@@ -51,17 +51,28 @@ class DataFile(models.Model):
       """Get the address of the file on OpenDAP, after saving cache."""
       return (ZooAdapter.config.get_thredds_server_address() + 
          '/thredds/dodsC/datafiles/inputs/' + self.cached_file)
+
+   def get_local_last_modified(self):
+      """Return the last modified date of the file on the opendap server."""
+      return Common.get_http_last_modified(self.file_url)
+
+   def get_remote_last_modified(self):
+      """Return the last modified date of the remote HTTP file."""
+      dds_addr = self._get_opendap_addr() + '.dds'
+      return Common.get_http_last_modified(dds_addr)
    
    def update_cache(self):
       """ Update our local cache file, ONLY if necessary."""
 
+      '''
       dds_addr = self._get_opendap_addr() + '.dds'
 
       local_last_modified = Common.get_http_last_modified(dds_addr)
       remote_last_modified = Common.get_http_last_modified(self.file_url)
-
+      '''
       # update cache if necessary
-      if remote_last_modified > local_last_modified:
+      #if remote_last_modified > local_last_modified:
+      if self.get_remote_last_modified() > self.get_local_last_modified():
          self.__save_cache()
 
    def get_variables(self):
@@ -98,12 +109,32 @@ class Computation(models.Model):
    def get_computationdata(self):
       return ComputationData.objects.filter(computation=self).order_by('id')
 
-   def _check_for_existing_result(self):
-      """Try to find a Computation that has the same data as this one."""
+   def _get_latest_datafile_date(self):
+      """Returns a date object for the DataFile associated with this
+      Computation that was most-recently updated."""
 
-      data_list = self.get_computationdata()
+      latest_date = None
+
+      for data in self.get_computationdata():
+
+         datafile_date = data.datafile.get_local_last_modified()
+
+         if latest_date and datafile_date > latest_date:
+            latest_date = datafile_date
+
+      return latest_date
+
+
+   def _check_for_existing_result(self):
+      """Check to see if a Computation with the exact same data already exists,
+      and if so use its results.
+
+      This will only use Computations whose results are up-to-date with its
+      DataFiles."""
 
       where_clauses = []
+
+      data_list = self.get_computationdata()
 
       for data in data_list: 
 
@@ -113,19 +144,23 @@ class Computation(models.Model):
                + ' AND cd.variables = \'' + json_str + '\')')
 
       # look for computation with same data!
+      # note: will only pick up Computations that have associated
+      # ComputationData objects (not ones that have used others' results)
       query_str = ('SELECT * FROM climateanalyser_computation WHERE id IN'
                    ' (SELECT cd.computation_id'
                    ' FROM climateanalyser_computationdata as cd'
                    ' INNER JOIN climateanalyser_datafile as df'
                    ' on cd.datafile_id = df.id'
                    ' WHERE' + ' OR '.join(where_clauses) +
-                   ' AND cd.computation_id != ' + str(self.id) +
+                   ' AND cd.computation_id != %s'
                    ' GROUP BY cd.computation_id'
-                   ' HAVING count(df.id) = ' + str(len(data_list)) +
-                   ' AND calculation_id = ' + str(self.calculation.id) +
-                   ' ) LIMIT 1')
+                   ' HAVING count(df.id) = %s'
+                   ' AND calculation_id = %s'
+                   ' ) AND completed_date > %s'
+                   ' LIMIT 1')
 
-      computations = Computation.objects.raw(query_str)
+      computations = Computation.objects.raw(query_str,[self.id,len(data_list),
+            self.calculation.id, self._get_latest_datafile_date()])
 
       if (len(list(computations)) > 0):
          return computations[0]
@@ -160,7 +195,7 @@ class Computation(models.Model):
 
 
 class ComputationData(models.Model):
-   """Link between Computation and DataFiles. Specific variables for data file
+   """Link between Computation and DataFiles. Specific variables for DataFile
    can be selected.
    """
    datafile = models.ForeignKey(DataFile)   
