@@ -38,8 +38,6 @@ class DataFile(models.Model):
       self.variables = ZooAdapter.get_datafile_variables(
             self._get_opendap_addr())
 
-      self.last_modified = datetime.now()
-
    def _save_cache(self):
       """ Cache the file on the OpenDAP server."""
       #file name is md5 string of url
