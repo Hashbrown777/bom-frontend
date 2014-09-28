@@ -1,4 +1,5 @@
 import json,urllib,rsa,base64
+from datetime import datetime
 from django.http import HttpResponse
 from models import DataFile,Computation
 from zooadapter.models import ZooAdapter,ZooComputationStatus
@@ -49,7 +50,14 @@ def update_computation_status(request):
 
    if computation and status:
       computation.status = status
+
+      # if job is completed, update its completed_date
+      if status.status is 'success':
+         computation.completed_date = datetime.now()
+
       computation.save()
+
+      # we successfully updated the computation's status
       response = 'success'
 
    return HttpResponse(response)
