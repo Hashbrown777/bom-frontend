@@ -122,7 +122,6 @@ class Computation(models.Model):
 
       return latest_date
 
-
    def _check_for_existing_result(self):
       """Check to see if a Computation with the exact same data already exists,
       and if so use its results.
@@ -179,6 +178,7 @@ class Computation(models.Model):
          self.result_wms = existing_computation.result_wms
          self.result_nc = existing_computation.result_nc
          self.result_opendap = existing_computation.result_opendap
+         self.completed_date = datetime.now()
 
       else:
 
