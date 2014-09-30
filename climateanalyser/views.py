@@ -39,7 +39,6 @@ def create_datafile(request):
 
          messages.success(request, 'Data File successfully created!')
          return HttpResponseRedirect('/datafiles')
-      
    else:
       form = DataFileForm()
 
@@ -96,18 +95,13 @@ def computations(request):
 
    #Filter for current user
    if request.GET.get('show_mine'):
-      user = request.user
-      computation_list = Computation.objects.filter(created_by=user)
+      computation_list = Computation.objects.filter(created_by=request.user)
       template_params['show_mine'] = True;
    else:
-      computation_list = Computation.objects.filter()
-      computation_list = Computation.objects.all()
-      template_params['show_mine'] = False;
+      computation_list = Computation.objects.all();
 
-
-   computation_list.order_by('id')
+   computation_list = computation_list.order_by('-id')
    paginator = Paginator(computation_list, 2)
-
    page = request.GET.get('page')
 
    try:
