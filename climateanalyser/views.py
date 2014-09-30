@@ -7,7 +7,6 @@ from django.http import HttpResponseRedirect
 from forms import *
 from models import *
 from django.contrib import messages
-from django.http import StreamingHttpResponse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.forms.util import ErrorList
@@ -116,15 +115,4 @@ def computations(request):
 
    return render(request, 'computations.html', template_params)
 
-def load_cache(request):
-   """To be used by AJAX requests to load a cached copy of a DataFile."""
 
-   file = request.GET.get('file')
-
-   if file:
-      # print contents of file directly to the screen
-      full_path = settings.CACHE_DIR + file
-      response = StreamingHttpResponse(open(full_path))
-      return response
-
-   return HttpResponse('')
