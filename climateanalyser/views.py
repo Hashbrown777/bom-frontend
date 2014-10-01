@@ -12,6 +12,8 @@ from django.contrib.auth.decorators import login_required
 from django.forms.util import ErrorList
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+ITEMS_PER_PAGE = 25
+
 def index(request):
    """Default app page. It's just blank. """
    t = loader.get_template('index.html')
@@ -21,8 +23,21 @@ def index(request):
 
 def datafiles(request): 
    """View list of DataFiles in the system."""
-   return render(request, 'datafiles.html', { 'datafiles' : 
-         DataFile.objects.filter() })
+
+   page = request.GET.get('page')
+   paginator = Paginator(DataFile.objects.all(), ITEMS_PER_PAGE)
+
+   try:
+      datafiles = paginator.page(page)
+   except PageNotAnInteger:
+      datafiles = paginator.page(1)
+   except EmptyPage:
+      datafiles = paginator.page(paginator.num_pages)
+
+   page_range = range(paginator.num_pages)
+
+   return render(request, 'datafiles.html', 
+         { 'datafiles' : datafiles, 'page_range' : page_range })
 
 @login_required
 def create_datafile(request):
@@ -91,6 +106,7 @@ def computations(request):
    """View list of Computations in the system."""
 
    template_params = {}
+   page = request.GET.get('page')
 
    #Filter for current user
    if request.GET.get('show_mine'):
@@ -100,8 +116,7 @@ def computations(request):
       computation_list = Computation.objects.all();
 
    computation_list = computation_list.order_by('-id')
-   paginator = Paginator(computation_list, 2)
-   page = request.GET.get('page')
+   paginator = Paginator(computation_list, ITEMS_PER_PAGE)
 
    try:
       computations = paginator.page(page)
