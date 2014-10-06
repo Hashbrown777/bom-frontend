@@ -137,7 +137,7 @@ class ZooAdapter():
       text = filehandle.read()
 
       result_links['wms'] = ZooAdapter._get_result_link(text, 'wms')
-      result_links['nc'] = ZooAdapter._get_result_link(text, 'nc')
+      result_links['nc'] = ZooAdapter._get_result_link(text, 'ncfile')
       result_links['opendap'] = ZooAdapter._get_result_link(text, 'opendap')
 
       return_bundle['status'] = ZooAdapter._get_result_status(text)
@@ -179,13 +179,16 @@ class ZooAdapter():
             
       #append all data files
       for data in computation.get_computationdata():
-         datafiles_str += data.datafile.file_url + ','
+         datafiles_str += data.datafile.file_url + '?'
+         datafiles_str += ','.join(data.variables) + ','
 
       #Remove trailing comma
       descriptor_file += datafiles_str[:-1]
 
       #add computation id
       descriptor_file += ';jobid=' + str(computation.id)
+
+      print descriptor_file
 
       return descriptor_file
 
@@ -202,7 +205,7 @@ class ZooAdapter():
       regex = '\[' + format + '\](.*?)\[/' + format + '\]'
       result_url = ''
 
-      match = re.search(regex, regex)
+      match = re.search(regex, text)
 
       if match:
          result_url = match.group(1)

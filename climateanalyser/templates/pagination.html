@@ -1,0 +1,14 @@
+{% load staticfiles %}
+<script src="{% static "climateanalyser/js/pagination.js" %}"></script>
+
+<div class="pagination">
+{% for i in pages %}
+
+   {% if number = i|add:"1" %}
+      <span>{{i|add:"1"}}</span>
+   {% else %}
+      <span><a onclick="goToPage({{i|add:"1"}})" href="#">{{i|add:"1"}}</a></span>
+   {% endif %}
+{% endfor %}
+</div>
+

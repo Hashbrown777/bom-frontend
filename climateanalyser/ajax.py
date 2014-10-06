@@ -1,7 +1,10 @@
 import json,urllib,rsa,base64
+from datetime import datetime
 from django.http import HttpResponse
 from models import DataFile,Computation
 from zooadapter.models import ZooAdapter,ZooComputationStatus
+from django.conf import settings
+from django.http import StreamingHttpResponse
 
 def load_datafile_variables(request):
 
@@ -49,7 +52,14 @@ def update_computation_status(request):
 
    if computation and status:
       computation.status = status
+
+      # if job is completed, update its completed_date
+      if status.status is 'success':
+         computation.completed_date = datetime.now()
+
       computation.save()
+
+      # we successfully updated the computation's status
       response = 'success'
 
    return HttpResponse(response)
@@ -97,3 +107,16 @@ def get_data_value(request):
       response = '{"value":' + str(respJSON[u'max']) + '}'
 
    return HttpResponse(response, content_type='application/json')
+
+def load_cache(request):
+   """To be used by AJAX requests to load a cached copy of a DataFile."""
+
+   file = request.GET.get('file')
+
+   if file:
+      # print contents of file directly to the screen
+      full_path = settings.CACHE_DIR + file
+      response = StreamingHttpResponse(open(full_path))
+      return response
+
+   return HttpResponse('')
